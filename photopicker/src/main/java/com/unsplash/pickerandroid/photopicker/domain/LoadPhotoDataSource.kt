@@ -39,7 +39,7 @@ class LoadPhotoDataSource(private val networkEndpoints: NetworkEndpoints) : Page
                     // we push the result on the paging callback
                     // we update the network state to success
                     if (response != null && response.isSuccessful) {
-                        lastPage = response.headers().get("x-total")?.toInt()?.div(20)
+                        lastPage = response.headers().get("x-total")?.toInt()?.div(params.requestedLoadSize)
                         callback.onResult(response.body()!!, null, 2)
                         networkState.postValue(NetworkState.SUCCESS)
                     }

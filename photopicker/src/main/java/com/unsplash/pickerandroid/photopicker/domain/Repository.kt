@@ -12,10 +12,20 @@ import io.reactivex.Observable
 class Repository constructor(private val networkEndpoints: NetworkEndpoints) {
 
     fun loadPhotos(pageSize: Int): Observable<PagedList<Photo>> {
-        return RxPagedListBuilder(LoadPhotoDataSourceFactory(networkEndpoints), pageSize).buildObservable()
+        return RxPagedListBuilder(
+            LoadPhotoDataSourceFactory(networkEndpoints),
+            PagedList.Config.Builder()
+                .setInitialLoadSizeHint(pageSize)
+                .build()
+        ).buildObservable()
     }
 
     fun searchPhotos(criteria: String, pageSize: Int): Observable<PagedList<Photo>> {
-        return RxPagedListBuilder(SearchPhotoDataSourceFactory(networkEndpoints, criteria), pageSize).buildObservable()
+        return RxPagedListBuilder(
+            SearchPhotoDataSourceFactory(networkEndpoints, criteria),
+            PagedList.Config.Builder()
+                .setInitialLoadSizeHint(pageSize)
+                .build()
+        ).buildObservable()
     }
 }

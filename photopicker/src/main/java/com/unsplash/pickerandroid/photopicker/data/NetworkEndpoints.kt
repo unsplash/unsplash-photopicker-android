@@ -24,4 +24,8 @@ interface NetworkEndpoints {
         @Query("page") page: Int,
         @Query("per_page") pageSize: Int
     ): Observable<Response<SearchResponse>>
+
+    companion object {
+        const val BASE_URL = "https://api.unsplash.com/"
+    }
 }

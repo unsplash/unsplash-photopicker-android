@@ -43,6 +43,7 @@ dependencies {
     // misc
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'com.jakewharton.rxbinding2:rxbinding:2.1.1'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.11.0'
 
     // lifecycle
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'

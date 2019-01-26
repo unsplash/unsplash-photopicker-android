@@ -9,6 +9,7 @@ class ExampleApplication : Application() {
         super.onCreate()
         // initializing the picker library
         UnsplashPhotoPicker.init(
+            this,
             "your access key",
             "your secret key"
             /* optional page size */

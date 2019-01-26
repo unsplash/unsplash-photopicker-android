@@ -5,8 +5,13 @@ import android.content.Intent
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.ImageView
+import android.widget.Toast
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.unsplash.pickerandroid.photopicker.Injector
 import com.unsplash.pickerandroid.photopicker.R
 import kotlinx.android.synthetic.main.activity_picker.*
 
@@ -20,6 +25,8 @@ class PickerActivity : AppCompatActivity(), OnImageSelectedListener {
     private lateinit var mLayoutManager: StaggeredGridLayoutManager
 
     private lateinit var mAdapter: PhotoAdapter
+
+    private lateinit var mViewModel: PickerViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +45,33 @@ class PickerActivity : AppCompatActivity(), OnImageSelectedListener {
         picker_done_image_view.setOnClickListener {
             // TODO send selected photos as a result
         }
-        // TODO get the view model and bind search edit text
+        // get the view model and bind search edit text
+        mViewModel = ViewModelProviders.of(this, Injector.createPickerViewModelFactory()).get(PickerViewModel::class.java)
+        observeViewModel()
+        mViewModel.bindSearch(picker_edit_text)
+        // init the title
+        onImageSelected(0)
+    }
+
+    /**
+     * Observes the live data in the view model.
+     */
+    private fun observeViewModel() {
+        mViewModel.errorLiveData.observe(this, Observer {
+            Toast.makeText(this, "error", Toast.LENGTH_SHORT).show()
+        })
+        mViewModel.messageLiveData.observe(this, Observer {
+            Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+        })
+        mViewModel.loadingLiveData.observe(this, Observer {
+            picker_progress_bar_layout.visibility = if (it != null && it) View.VISIBLE else View.GONE
+        })
+        mViewModel.photosLiveData.observe(this, Observer {
+            picker_no_result_text_view.visibility =
+                    if (it == null || it.isEmpty()) View.VISIBLE
+                    else View.GONE
+            mAdapter.submitList(it)
+        })
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
