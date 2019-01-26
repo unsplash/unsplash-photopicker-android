@@ -1,9 +1,11 @@
 <resources>
     <string name="app_name">Photo Picker</string>
-    <string name="unsplash">Unsplash</string>
     <string name="back">Back</string>
-    <string name="done">Done</string>
-    <string name="search">Search</string>
+    <string name="checked">Checked</string>
     <string name="clear">Clear</string>
+    <string name="done">Done</string>
     <string name="no_result">No result</string>
+    <string name="photo">Photo</string>
+    <string name="search">Search</string>
+    <string name="unsplash">Unsplash</string>
 </resources>
