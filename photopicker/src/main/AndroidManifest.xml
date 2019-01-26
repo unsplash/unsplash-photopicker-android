@@ -3,7 +3,9 @@
           package="com.unsplash.pickerandroid.photopicker">
 
     <application>
-        <activity android:name=".presentation.PickerActivity">
+        <activity android:name=".presentation.PickerActivity"
+                  android:configChanges="orientation|screenSize"
+                  android:theme="@style/AppTheme.NoActionBar">
         </activity>
     </application>
 
