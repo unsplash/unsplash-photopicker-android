@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
@@ -42,11 +43,13 @@ class PickerActivity : AppCompatActivity(), OnImageSelectedListener {
         picker_recycler_view.adapter = mAdapter
         // click listeners
         picker_back_image_view.setOnClickListener { onBackPressed() }
+        picker_clear_image_view.setOnClickListener { picker_edit_text.setText("") }
         picker_done_image_view.setOnClickListener {
             // TODO send selected photos as a result
         }
         // get the view model and bind search edit text
-        mViewModel = ViewModelProviders.of(this, Injector.createPickerViewModelFactory()).get(PickerViewModel::class.java)
+        mViewModel =
+                ViewModelProviders.of(this, Injector.createPickerViewModelFactory()).get(PickerViewModel::class.java)
         observeViewModel()
         mViewModel.bindSearch(picker_edit_text)
         // init the title
@@ -65,6 +68,9 @@ class PickerActivity : AppCompatActivity(), OnImageSelectedListener {
         })
         mViewModel.loadingLiveData.observe(this, Observer {
             picker_progress_bar_layout.visibility = if (it != null && it) View.VISIBLE else View.GONE
+        })
+        mViewModel.textLiveData.observe(this, Observer {
+            picker_clear_image_view.visibility = if (TextUtils.isEmpty(it)) View.GONE else View.VISIBLE
         })
         mViewModel.photosLiveData.observe(this, Observer {
             picker_no_result_text_view.visibility =

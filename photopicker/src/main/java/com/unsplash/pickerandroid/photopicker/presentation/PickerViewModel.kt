@@ -23,6 +23,9 @@ class PickerViewModel constructor(private val repository: Repository) : BaseView
     private val mPhotosLiveData = MutableLiveData<PagedList<Photo>>()
     val photosLiveData: LiveData<PagedList<Photo>> get() = mPhotosLiveData
 
+    private val mTextLiveData = MutableLiveData<CharSequence>()
+    val textLiveData: LiveData<CharSequence> get() = mTextLiveData
+
     override fun getTag(): String {
         return PickerViewModel::class.java.simpleName
     }
@@ -36,7 +39,10 @@ class PickerViewModel constructor(private val repository: Repository) : BaseView
         RxTextView.textChanges(editText)
             .debounce(500, TimeUnit.MILLISECONDS)
             .observeOn(AndroidSchedulers.mainThread())
-            .doOnNext { mLoadingLiveData.postValue(true) }
+            .doOnNext {
+                mLoadingLiveData.postValue(true)
+                mTextLiveData.postValue(it)
+            }
             .observeOn(Schedulers.io())
             .switchMap { text ->
                 if (TextUtils.isEmpty(text)) repository.loadPhotos(UnsplashPhotoPicker.getPageSize())
