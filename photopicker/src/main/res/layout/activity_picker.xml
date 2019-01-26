@@ -101,7 +101,7 @@
     <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/picker_recycler_view"
             android:layout_width="0dp"
-            android:paddingTop="8dp"
+            android:paddingTop="4dp"
             android:paddingBottom="8dp"
             android:paddingLeft="4dp"
             android:paddingRight="4dp"

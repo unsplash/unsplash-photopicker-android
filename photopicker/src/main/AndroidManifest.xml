@@ -9,6 +9,9 @@
                   android:configChanges="orientation|screenSize"
                   android:theme="@style/AppTheme.NoActionBar">
         </activity>
+        <activity android:name=".presentation.ImageShowActivity"
+                  android:theme="@style/AppTheme.NoActionBar.Transparent">
+        </activity>
     </application>
 
 </manifest>

@@ -9,6 +9,7 @@ import android.text.TextUtils
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.core.app.ActivityOptionsCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -109,7 +110,8 @@ class PickerActivity : AppCompatActivity(), OnImageSelectedListener {
     }
 
     override fun onImageLongPress(imageView: ImageView, url: String) {
-        // TODO show the image preview
+        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, imageView as View, "image")
+        startActivity(ImageShowActivity.getStartingIntent(this, url), options.toBundle())
     }
 
     companion object {
