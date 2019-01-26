@@ -2,6 +2,7 @@ package com.unsplash.pickerandroid.photopicker.domain
 
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.PageKeyedDataSource
+import com.unsplash.pickerandroid.photopicker.UnsplashPhotoPicker
 import com.unsplash.pickerandroid.photopicker.data.NetworkEndpoints
 import com.unsplash.pickerandroid.photopicker.data.Photo
 import com.unsplash.pickerandroid.photopicker.data.SearchResponse
@@ -26,7 +27,12 @@ class SearchPhotoDataSource(
         // updating the network state to loading
         networkState.postValue(NetworkState.LOADING)
         // api call for the first page
-        networkEndpoints.searchPhotos(/*TODO*/"", criteria, 1, params.requestedLoadSize)
+        networkEndpoints.searchPhotos(
+            UnsplashPhotoPicker.getAccessKey(),
+            criteria,
+            1,
+            params.requestedLoadSize
+        )
             .subscribe(object : Observer<Response<SearchResponse>> {
                 override fun onComplete() {
                     // do nothing on this terminal event
@@ -64,7 +70,12 @@ class SearchPhotoDataSource(
         // updating the network state to loading
         networkState.postValue(NetworkState.LOADING)
         // api call for the subsequent pages
-        networkEndpoints.searchPhotos(/*TODO*/"", criteria, params.key, params.requestedLoadSize)
+        networkEndpoints.searchPhotos(
+            UnsplashPhotoPicker.getAccessKey(),
+            criteria,
+            params.key,
+            params.requestedLoadSize
+        )
             .subscribe(object : Observer<Response<SearchResponse>> {
                 override fun onComplete() {
                     // do nothing on this terminal event
