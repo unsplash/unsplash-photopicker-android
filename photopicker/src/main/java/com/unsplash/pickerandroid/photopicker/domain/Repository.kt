@@ -16,6 +16,7 @@ class Repository constructor(private val networkEndpoints: NetworkEndpoints) {
             LoadPhotoDataSourceFactory(networkEndpoints),
             PagedList.Config.Builder()
                 .setInitialLoadSizeHint(pageSize)
+                .setPageSize(pageSize)
                 .build()
         ).buildObservable()
     }
@@ -25,6 +26,7 @@ class Repository constructor(private val networkEndpoints: NetworkEndpoints) {
             SearchPhotoDataSourceFactory(networkEndpoints, criteria),
             PagedList.Config.Builder()
                 .setInitialLoadSizeHint(pageSize)
+                .setPageSize(pageSize)
                 .build()
         ).buildObservable()
     }
