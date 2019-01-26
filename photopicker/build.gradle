@@ -42,6 +42,11 @@ dependencies {
 
     // misc
     implementation 'com.squareup.picasso:picasso:2.71828'
+    implementation 'com.jakewharton.rxbinding2:rxbinding:2.1.1'
+
+    // lifecycle
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
+    kapt 'androidx.lifecycle:lifecycle-compiler:2.1.0-alpha01'
 
     // test
     testImplementation 'junit:junit:4.12'

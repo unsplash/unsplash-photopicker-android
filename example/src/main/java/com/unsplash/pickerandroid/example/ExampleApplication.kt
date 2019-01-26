@@ -8,6 +8,10 @@ class ExampleApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         // initializing the picker library
-        UnsplashPhotoPicker.init("your access key", "your secret key")
+        UnsplashPhotoPicker.init(
+            "your access key",
+            "your secret key"
+            /* optional page size */
+        )
     }
 }

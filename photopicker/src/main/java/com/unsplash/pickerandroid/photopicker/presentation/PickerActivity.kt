@@ -38,6 +38,7 @@ class PickerActivity : AppCompatActivity(), OnImageSelectedListener {
         picker_done_image_view.setOnClickListener {
             // TODO send selected photos as a result
         }
+        // TODO get the view model and bind search edit text
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
