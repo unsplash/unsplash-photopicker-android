@@ -4,6 +4,8 @@ import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
+import com.unsplash.pickerandroid.photopicker.presentation.Image
 import com.unsplash.pickerandroid.photopicker.presentation.PickerActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -28,7 +30,8 @@ class MainActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE) {
-            // TODO get images selected here
+            val images: ArrayList<Image>? = data?.getParcelableArrayListExtra(PickerActivity.EXTRA_IMAGES)
+            Toast.makeText(this, "number of selected images: " + images?.size, Toast.LENGTH_SHORT).show()
         }
     }
 

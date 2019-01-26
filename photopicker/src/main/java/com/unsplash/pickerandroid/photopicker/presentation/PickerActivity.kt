@@ -1,5 +1,6 @@
 package com.unsplash.pickerandroid.photopicker.presentation
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
@@ -49,7 +50,7 @@ class PickerActivity : AppCompatActivity(), OnImageSelectedListener {
         picker_back_image_view.setOnClickListener { onBackPressed() }
         picker_clear_image_view.setOnClickListener { picker_edit_text.setText("") }
         picker_done_image_view.setOnClickListener {
-            // TODO send selected photos as a result
+            sendImagesAsResult()
         }
         // get the view model and bind search edit text
         mViewModel =
@@ -105,8 +106,19 @@ class PickerActivity : AppCompatActivity(), OnImageSelectedListener {
         }
         // if single selection send selected photo as a result
         else if (nbOfSelectedImages > 0) {
-            // TODO send selected photo as a result
+            sendImagesAsResult()
         }
+    }
+
+    /**
+     * Sends images in the result intent as a result for the calling activity.
+     */
+    private fun sendImagesAsResult() {
+        val images: ArrayList<Image> = mAdapter.getImages()
+        val data = Intent()
+        data.putExtra(EXTRA_IMAGES, images)
+        setResult(Activity.RESULT_OK, data)
+        finish()
     }
 
     override fun onImageLongPress(imageView: ImageView, url: String) {
@@ -115,6 +127,7 @@ class PickerActivity : AppCompatActivity(), OnImageSelectedListener {
     }
 
     companion object {
+        const val EXTRA_IMAGES = "EXTRA_IMAGES"
         private const val EXTRA_IS_MULTIPLE = "EXTRA_IS_MULTIPLE"
 
         /**
