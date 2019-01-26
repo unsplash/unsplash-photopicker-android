@@ -6,6 +6,8 @@
     <string name="done">Done</string>
     <string name="no_result">No result</string>
     <string name="photo">Photo</string>
+    <string name="photo_selected">1 photo selected</string>
+    <string name="photos_selected">%1$d photos selected</string>
     <string name="search">Search</string>
     <string name="unsplash">Unsplash</string>
 </resources>

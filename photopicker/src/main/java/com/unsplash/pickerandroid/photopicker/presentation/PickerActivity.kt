@@ -29,13 +29,16 @@ class PickerActivity : AppCompatActivity(), OnImageSelectedListener {
 
     private lateinit var mViewModel: PickerViewModel
 
+    private var mIsMultipleSelection: Boolean = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_picker)
+        mIsMultipleSelection = intent.getBooleanExtra(EXTRA_IS_MULTIPLE, false)
         // recycler view layout manager
         mLayoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         // recycler view adapter
-        mAdapter = PhotoAdapter(this, intent.getBooleanExtra(EXTRA_IS_MULTIPLE, false))
+        mAdapter = PhotoAdapter(this, mIsMultipleSelection)
         mAdapter.setOnImageSelectedListener(this)
         // recycler view configuration
         picker_recycler_view.setHasFixedSize(true)
@@ -90,9 +93,19 @@ class PickerActivity : AppCompatActivity(), OnImageSelectedListener {
     }
 
     override fun onImageSelected(nbOfSelectedImages: Int) {
-        // TODO
-        // if single selection send selected photo as a result
         // if multiple selection update the title and show the done image
+        if (mIsMultipleSelection) {
+            picker_title_text_view.text = when (nbOfSelectedImages) {
+                0 -> getString(R.string.unsplash)
+                1 -> getString(R.string.photo_selected)
+                else -> getString(R.string.photos_selected, nbOfSelectedImages)
+            }
+            picker_done_image_view.visibility = if (nbOfSelectedImages == 0) View.GONE else View.VISIBLE
+        }
+        // if single selection send selected photo as a result
+        else if (nbOfSelectedImages > 0) {
+            // TODO send selected photo as a result
+        }
     }
 
     override fun onImageLongPress(imageView: ImageView, url: String) {
