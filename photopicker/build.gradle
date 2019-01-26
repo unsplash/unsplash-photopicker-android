@@ -33,6 +33,10 @@ dependencies {
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.4.0'
     implementation 'com.squareup.retrofit2:converter-moshi:2.4.0'
 
+    // paging
+    implementation 'androidx.paging:paging-runtime:2.1.0'
+    implementation 'androidx.paging:paging-rxjava2:2.1.0'
+
     // test
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.1'
