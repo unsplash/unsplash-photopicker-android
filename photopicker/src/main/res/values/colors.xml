@@ -7,4 +7,5 @@
     <!--Please do not override those colors-->
     <color name="pickerColorTransparentGrey">#77cccccc</color>
     <color name="pickerColorBlurredGrey">#ddaaaaaa</color>
+    <color name="pickerColorTransparentBlack">#77000000</color>
 </resources>
