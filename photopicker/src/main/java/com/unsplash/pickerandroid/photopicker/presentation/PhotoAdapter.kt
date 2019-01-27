@@ -94,6 +94,11 @@ class PhotoAdapter constructor(context: Context, private val isMultipleSelection
         return mSelectedImages
     }
 
+    fun clearSelection() {
+        mSelectedImages.clear()
+        mSelectedIndexes.clear()
+    }
+
     fun setOnImageSelectedListener(onImageSelectedListener: OnImageSelectedListener) {
         mOnImageSelectedListener = onImageSelectedListener
     }

@@ -76,6 +76,10 @@ class PickerActivity : AppCompatActivity(), OnImageSelectedListener {
         })
         mViewModel.textLiveData.observe(this, Observer {
             picker_clear_image_view.visibility = if (TextUtils.isEmpty(it)) View.GONE else View.VISIBLE
+            if (mIsMultipleSelection) {
+                mAdapter.clearSelection()
+                onImageSelected(0)
+            }
         })
         mViewModel.photosLiveData.observe(this, Observer {
             picker_no_result_text_view.visibility =
