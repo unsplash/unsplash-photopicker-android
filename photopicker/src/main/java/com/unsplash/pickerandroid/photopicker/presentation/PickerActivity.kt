@@ -44,6 +44,7 @@ class PickerActivity : AppCompatActivity(), OnImageSelectedListener {
         mAdapter.setOnImageSelectedListener(this)
         // recycler view configuration
         picker_recycler_view.setHasFixedSize(true)
+        picker_recycler_view.itemAnimator = null
         picker_recycler_view.layoutManager = mLayoutManager
         picker_recycler_view.adapter = mAdapter
         // click listeners
