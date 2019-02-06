@@ -1,6 +1,8 @@
 package com.unsplash.pickerandroid.photopicker.presentation
 
 import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,7 +41,9 @@ class PhotoAdapter constructor(context: Context, private val isMultipleSelection
         val photo = getItem(position)
         if (photo != null) {
             // image
+            val color = ColorDrawable(Color.parseColor(photo.color))
             Picasso.get().load(photo.urls.small)
+                .placeholder(color)
                 .into(holder.imageView)
             // photograph name
             holder.txtView.text = photo.user.name
