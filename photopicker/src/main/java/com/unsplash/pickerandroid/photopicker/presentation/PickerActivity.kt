@@ -49,7 +49,8 @@ class PickerActivity : AppCompatActivity(), OnImageSelectedListener {
         picker_recycler_view.adapter = mAdapter
         // click listeners
         picker_back_image_view.setOnClickListener { onBackPressed() }
-        picker_clear_image_view.setOnClickListener { picker_edit_text.setText("") }
+        picker_search_image_view.setOnClickListener { showSearch() }
+        picker_clear_image_view.setOnClickListener { hideSearch(true) }
         picker_done_image_view.setOnClickListener {
             sendImagesAsResult()
         }
@@ -59,7 +60,7 @@ class PickerActivity : AppCompatActivity(), OnImageSelectedListener {
         observeViewModel()
         mViewModel.bindSearch(picker_edit_text)
         // init the title
-        onImageSelected(0)
+        onImageSelected(0, false)
     }
 
     /**
@@ -79,7 +80,7 @@ class PickerActivity : AppCompatActivity(), OnImageSelectedListener {
             picker_clear_image_view.visibility = if (TextUtils.isEmpty(it)) View.GONE else View.VISIBLE
             if (mIsMultipleSelection) {
                 mAdapter.clearSelection()
-                onImageSelected(0)
+                onImageSelected(0, false)
             }
         })
         mViewModel.photosLiveData.observe(this, Observer {
@@ -99,20 +100,52 @@ class PickerActivity : AppCompatActivity(), OnImageSelectedListener {
         mAdapter.notifyDataSetChanged()
     }
 
-    override fun onImageSelected(nbOfSelectedImages: Int) {
-        // if multiple selection update the title and show the done image
+    override fun onImageSelected(nbOfSelectedImages: Int, userInput: Boolean) {
+        // if multiple selection
         if (mIsMultipleSelection) {
+            // update the title
             picker_title_text_view.text = when (nbOfSelectedImages) {
                 0 -> getString(R.string.unsplash)
                 1 -> getString(R.string.photo_selected)
                 else -> getString(R.string.photos_selected, nbOfSelectedImages)
             }
+            //  hide or show the done and search images
             picker_done_image_view.visibility = if (nbOfSelectedImages == 0) View.GONE else View.VISIBLE
+            picker_search_image_view.visibility = if (nbOfSelectedImages == 0) View.VISIBLE else View.GONE
+            // hide the search if the user selected photo(s)
+            if (userInput) {
+                hideSearch(false)
+            }
         }
         // if single selection send selected photo as a result
         else if (nbOfSelectedImages > 0) {
             sendImagesAsResult()
         }
+    }
+
+    /**
+     * Shows the search edit text and the clear image.
+     */
+    private fun showSearch() {
+        picker_edit_text.visibility = View.VISIBLE
+        picker_clear_image_view.visibility = View.VISIBLE
+        picker_edit_text.requestFocus()
+        picker_edit_text.openKeyboard(this)
+    }
+
+    /**
+     * Clears the search criteria if specified
+     * and hide the search edit text and the clear image.
+     *
+     * @param clear true if the search has to be cleared, false otherwise
+     */
+    private fun hideSearch(clear: Boolean) {
+        if (clear && !TextUtils.isEmpty(picker_edit_text.text)) {
+            picker_edit_text.setText("")
+        }
+        picker_edit_text.visibility = View.GONE
+        picker_clear_image_view.visibility = View.GONE
+        picker_edit_text.closeKeyboard(this)
     }
 
     /**

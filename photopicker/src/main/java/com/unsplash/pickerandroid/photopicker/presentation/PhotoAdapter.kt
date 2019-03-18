@@ -62,7 +62,7 @@ class PhotoAdapter constructor(context: Context, private val isMultipleSelection
                 if (isMultipleSelection) {
                     notifyDataSetChanged()
                 }
-                mOnImageSelectedListener?.onImageSelected(mSelectedIndexes.size)
+                mOnImageSelectedListener?.onImageSelected(mSelectedIndexes.size, true)
                 // change title text
             }
             holder.itemView.setOnLongClickListener {
