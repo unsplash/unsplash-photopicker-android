@@ -4,7 +4,7 @@
     <string name="checked">Checked</string>
     <string name="clear">Clear</string>
     <string name="done">Done</string>
-    <string name="no_result">No result</string>
+    <string name="no_result">No search results</string>
     <string name="photo">Photo</string>
     <string name="photo_selected">1 photo selected</string>
     <string name="photos_selected">%1$d photos selected</string>
