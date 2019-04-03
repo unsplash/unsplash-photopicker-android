@@ -23,9 +23,6 @@ class PickerViewModel constructor(private val repository: Repository) : BaseView
     private val mPhotosLiveData = MutableLiveData<PagedList<Photo>>()
     val photosLiveData: LiveData<PagedList<Photo>> get() = mPhotosLiveData
 
-    private val mTextLiveData = MutableLiveData<CharSequence>()
-    val textLiveData: LiveData<CharSequence> get() = mTextLiveData
-
     override fun getTag(): String {
         return PickerViewModel::class.java.simpleName
     }
@@ -33,7 +30,7 @@ class PickerViewModel constructor(private val repository: Repository) : BaseView
     /**
      * Binds the edit text using rx binding to listen to text change.
      *
-     * @param the edit text to listen to
+     * @param editText the edit text to listen to
      */
     fun bindSearch(editText: EditText) {
         RxTextView.textChanges(editText)
@@ -41,7 +38,6 @@ class PickerViewModel constructor(private val repository: Repository) : BaseView
             .observeOn(AndroidSchedulers.mainThread())
             .doOnNext {
                 mLoadingLiveData.postValue(true)
-                mTextLiveData.postValue(it)
             }
             .observeOn(Schedulers.io())
             .switchMap { text ->

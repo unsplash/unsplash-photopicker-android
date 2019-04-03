@@ -8,9 +8,8 @@ interface OnImageSelectedListener {
      * When a specified number of images are selected.
      *
      * @param nbOfSelectedImages the number of selected images
-     * @param userInput true if the user is the one that has selected the photos, false otherwise
      */
-    fun onImageSelected(nbOfSelectedImages: Int, userInput: Boolean)
+    fun onImageSelected(nbOfSelectedImages: Int)
 
     /**
      * When the user long presses an image.

@@ -31,7 +31,11 @@ class PickerActivity : AppCompatActivity(), OnImageSelectedListener {
 
     private lateinit var mViewModel: PickerViewModel
 
-    private var mIsMultipleSelection: Boolean = false
+    private var mIsMultipleSelection = false
+
+    private var mCurrentState = PickerState.IDLE
+
+    private var mPreviousState = PickerState.IDLE
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,18 +53,19 @@ class PickerActivity : AppCompatActivity(), OnImageSelectedListener {
         picker_recycler_view.adapter = mAdapter
         // click listeners
         picker_back_image_view.setOnClickListener { onBackPressed() }
-        picker_search_image_view.setOnClickListener { showSearch() }
-        picker_clear_image_view.setOnClickListener { hideSearch(true) }
-        picker_done_image_view.setOnClickListener {
-            sendImagesAsResult()
+        picker_cancel_image_view.setOnClickListener { onBackPressed() }
+        picker_clear_image_view.setOnClickListener { onBackPressed() }
+        picker_search_image_view.setOnClickListener {
+            // updating state
+            mCurrentState = PickerState.SEARCHING
+            updateUiFromState()
         }
+        picker_done_image_view.setOnClickListener { sendImagesAsResult() }
         // get the view model and bind search edit text
         mViewModel =
                 ViewModelProviders.of(this, Injector.createPickerViewModelFactory()).get(PickerViewModel::class.java)
         observeViewModel()
         mViewModel.bindSearch(picker_edit_text)
-        // init the title
-        onImageSelected(0, false)
     }
 
     /**
@@ -75,13 +80,6 @@ class PickerActivity : AppCompatActivity(), OnImageSelectedListener {
         })
         mViewModel.loadingLiveData.observe(this, Observer {
             picker_progress_bar_layout.visibility = if (it != null && it) View.VISIBLE else View.GONE
-        })
-        mViewModel.textLiveData.observe(this, Observer {
-            picker_clear_image_view.visibility = if (TextUtils.isEmpty(it)) View.GONE else View.VISIBLE
-            if (mIsMultipleSelection) {
-                mAdapter.clearSelection()
-                onImageSelected(0, false)
-            }
         })
         mViewModel.photosLiveData.observe(this, Observer {
             picker_no_result_text_view.visibility =
@@ -100,7 +98,7 @@ class PickerActivity : AppCompatActivity(), OnImageSelectedListener {
         mAdapter.notifyDataSetChanged()
     }
 
-    override fun onImageSelected(nbOfSelectedImages: Int, userInput: Boolean) {
+    override fun onImageSelected(nbOfSelectedImages: Int) {
         // if multiple selection
         if (mIsMultipleSelection) {
             // update the title
@@ -109,43 +107,22 @@ class PickerActivity : AppCompatActivity(), OnImageSelectedListener {
                 1 -> getString(R.string.photo_selected)
                 else -> getString(R.string.photos_selected, nbOfSelectedImages)
             }
-            //  hide or show the done and search images
-            picker_done_image_view.visibility = if (nbOfSelectedImages == 0) View.GONE else View.VISIBLE
-            picker_search_image_view.visibility = if (nbOfSelectedImages == 0) View.VISIBLE else View.GONE
-            // hide the search if the user selected photo(s)
-            if (userInput) {
-                hideSearch(false)
+            // updating state
+            if (nbOfSelectedImages > 0) {
+                // only once, ignoring all subsequent photo selections
+                if (mCurrentState != PickerState.PHOTO_SELECTED) {
+                    mPreviousState = mCurrentState
+                    mCurrentState = PickerState.PHOTO_SELECTED
+                }
+                updateUiFromState()
+            } else { // no photo selected means un-selection
+                onBackPressed()
             }
         }
         // if single selection send selected photo as a result
         else if (nbOfSelectedImages > 0) {
             sendImagesAsResult()
         }
-    }
-
-    /**
-     * Shows the search edit text and the clear image.
-     */
-    private fun showSearch() {
-        picker_edit_text.visibility = View.VISIBLE
-        picker_clear_image_view.visibility = View.VISIBLE
-        picker_edit_text.requestFocus()
-        picker_edit_text.openKeyboard(this)
-    }
-
-    /**
-     * Clears the search criteria if specified
-     * and hide the search edit text and the clear image.
-     *
-     * @param clear true if the search has to be cleared, false otherwise
-     */
-    private fun hideSearch(clear: Boolean) {
-        if (clear && !TextUtils.isEmpty(picker_edit_text.text)) {
-            picker_edit_text.setText("")
-        }
-        picker_edit_text.visibility = View.GONE
-        picker_clear_image_view.visibility = View.GONE
-        picker_edit_text.closeKeyboard(this)
     }
 
     /**
@@ -162,6 +139,94 @@ class PickerActivity : AppCompatActivity(), OnImageSelectedListener {
     override fun onImageLongPress(imageView: ImageView, url: String) {
         val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, imageView as View, "image")
         startActivity(ImageShowActivity.getStartingIntent(this, url), options.toBundle())
+    }
+
+    override fun onBackPressed() {
+        when (mCurrentState) {
+            PickerState.IDLE -> {
+                super.onBackPressed()
+            }
+            PickerState.SEARCHING -> {
+                // updating states
+                mCurrentState = PickerState.IDLE
+                mPreviousState = PickerState.SEARCHING
+                // updating ui
+                updateUiFromState()
+            }
+            PickerState.PHOTO_SELECTED -> {
+                // updating states
+                mCurrentState = if (mPreviousState == PickerState.SEARCHING) {
+                    PickerState.SEARCHING
+                } else {
+                    PickerState.IDLE
+                }
+                mPreviousState = PickerState.PHOTO_SELECTED
+                // updating ui
+                updateUiFromState()
+            }
+        }
+    }
+
+    /*
+    STATES
+     */
+
+    private fun updateUiFromState() {
+        when (mCurrentState) {
+            PickerState.IDLE -> {
+                // back and search buttons visible
+                picker_back_image_view.visibility = View.VISIBLE
+                picker_search_image_view.visibility = View.VISIBLE
+                // cancel and done buttons gone
+                picker_cancel_image_view.visibility = View.GONE
+                picker_done_image_view.visibility = View.GONE
+                // edit text cleared and gone
+                if (!TextUtils.isEmpty(picker_edit_text.text)) {
+                    picker_edit_text.setText("")
+                }
+                picker_edit_text.visibility = View.GONE
+                // right clear button on top of edit text gone
+                picker_clear_image_view.visibility = View.GONE
+                // keyboard down
+                picker_edit_text.closeKeyboard(this)
+                // action bar with unsplash
+                picker_title_text_view.text = getString(R.string.unsplash)
+                // clear list selection
+                mAdapter.clearSelection()
+                mAdapter.notifyDataSetChanged()
+            }
+            PickerState.SEARCHING -> {
+                // back, cancel, done or search buttons gone
+                picker_back_image_view.visibility = View.GONE
+                picker_cancel_image_view.visibility = View.GONE
+                picker_done_image_view.visibility = View.GONE
+                picker_search_image_view.visibility = View.GONE
+                // edit text visible and focused
+                picker_edit_text.visibility = View.VISIBLE
+                // right clear button on top of edit text visible
+                picker_clear_image_view.visibility = View.VISIBLE
+                // keyboard up
+                picker_edit_text.requestFocus()
+                picker_edit_text.openKeyboard(this)
+                // clear list selection
+                mAdapter.clearSelection()
+                mAdapter.notifyDataSetChanged()
+            }
+            PickerState.PHOTO_SELECTED -> {
+                // back and search buttons gone
+                picker_back_image_view.visibility = View.GONE
+                picker_search_image_view.visibility = View.GONE
+                // cancel and done buttons visible
+                picker_cancel_image_view.visibility = View.VISIBLE
+                picker_done_image_view.visibility = View.VISIBLE
+                // edit text gone
+                picker_edit_text.visibility = View.GONE
+                // right clear button on top of edit text gone
+                picker_clear_image_view.visibility = View.GONE
+                // keyboard down
+                picker_edit_text.closeKeyboard(this)
+            }
+        }
     }
 
     companion object {
