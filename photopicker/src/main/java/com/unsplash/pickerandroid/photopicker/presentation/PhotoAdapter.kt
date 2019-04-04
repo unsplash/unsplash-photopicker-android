@@ -40,6 +40,7 @@ class PhotoAdapter constructor(context: Context, private val isMultipleSelection
         val photo = getItem(position)
         if (photo != null) {
             // image
+            holder.imageView.aspectRatio = photo.height.toDouble() / photo.width.toDouble()
             holder.itemView.setBackgroundColor(Color.parseColor(photo.color))
             Picasso.get().load(photo.urls.small)
                 .into(holder.imageView)
@@ -120,7 +121,7 @@ class PhotoAdapter constructor(context: Context, private val isMultipleSelection
      * Photo view holder.
      */
     class PhotoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val imageView: ImageView = view.item_photo_image_view
+        val imageView: AspectRatioImageView = view.item_photo_image_view
         val txtView: TextView = view.item_photo_text_view
         val checkedImageView: ImageView = view.item_photo_checked_image_view
         val overlay: View = view.item_photo_overlay

@@ -7,18 +7,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-    <ImageView
+    <com.unsplash.pickerandroid.photopicker.presentation.AspectRatioImageView
             android:contentDescription="@string/photo"
             android:id="@+id/item_photo_image_view"
             android:transitionName="image"
             android:layout_width="0dp"
             android:scaleType="centerCrop"
-            tools:layout_height="200dp"
             android:layout_height="wrap_content"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:adjustViewBounds="true"/>
 
     <View
             android:layout_width="0dp"
