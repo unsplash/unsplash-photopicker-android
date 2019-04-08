@@ -4,7 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.paging.PageKeyedDataSource
 import com.unsplash.pickerandroid.photopicker.UnsplashPhotoPicker
 import com.unsplash.pickerandroid.photopicker.data.NetworkEndpoints
-import com.unsplash.pickerandroid.photopicker.data.Photo
+import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
 import com.unsplash.pickerandroid.photopicker.data.SearchResponse
 import io.reactivex.Observer
 import io.reactivex.disposables.Disposable
@@ -17,13 +17,13 @@ import retrofit2.Response
 class SearchPhotoDataSource(
     private val networkEndpoints: NetworkEndpoints,
     private val criteria: String
-) : PageKeyedDataSource<Int, Photo>() {
+) : PageKeyedDataSource<Int, UnsplashPhoto>() {
 
     val networkState = MutableLiveData<NetworkState>()
 
     private var lastPage: Int? = null
 
-    override fun loadInitial(params: LoadInitialParams<Int>, callback: LoadInitialCallback<Int, Photo>) {
+    override fun loadInitial(params: LoadInitialParams<Int>, callback: LoadInitialCallback<Int, UnsplashPhoto>) {
         // updating the network state to loading
         networkState.postValue(NetworkState.LOADING)
         // api call for the first page
@@ -66,7 +66,7 @@ class SearchPhotoDataSource(
             })
     }
 
-    override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, Photo>) {
+    override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, UnsplashPhoto>) {
         // updating the network state to loading
         networkState.postValue(NetworkState.LOADING)
         // api call for the subsequent pages
@@ -109,7 +109,7 @@ class SearchPhotoDataSource(
             })
     }
 
-    override fun loadBefore(params: LoadParams<Int>, callback: LoadCallback<Int, Photo>) {
+    override fun loadBefore(params: LoadParams<Int>, callback: LoadCallback<Int, UnsplashPhoto>) {
         // we do nothing here because everything will be loaded
     }
 }

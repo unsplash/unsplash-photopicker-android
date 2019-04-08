@@ -3,7 +3,7 @@ package com.unsplash.pickerandroid.photopicker.domain
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.DataSource
 import com.unsplash.pickerandroid.photopicker.data.NetworkEndpoints
-import com.unsplash.pickerandroid.photopicker.data.Photo
+import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
 
 /**
  * Android paging library data source factory.
@@ -13,11 +13,11 @@ class SearchPhotoDataSourceFactory constructor(
     private val networkEndpoints: NetworkEndpoints,
     private val criteria: String
 ) :
-    DataSource.Factory<Int, Photo>() {
+    DataSource.Factory<Int, UnsplashPhoto>() {
 
     val sourceLiveData = MutableLiveData<SearchPhotoDataSource>()
 
-    override fun create(): DataSource<Int, Photo> {
+    override fun create(): DataSource<Int, UnsplashPhoto> {
         val source = SearchPhotoDataSource(networkEndpoints, criteria)
         sourceLiveData.postValue(source)
         return source

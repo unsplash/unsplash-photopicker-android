@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.unsplash.pickerandroid.photopicker.Injector
 import com.unsplash.pickerandroid.photopicker.R
+import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
 import kotlinx.android.synthetic.main.activity_picker.*
 
 /**
@@ -23,19 +24,19 @@ import kotlinx.android.synthetic.main.activity_picker.*
  * This will show a list a photos and a search component.
  * The list is has an infinite scroll.
  */
-class PickerActivity : AppCompatActivity(), OnImageSelectedListener {
+class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
 
     private lateinit var mLayoutManager: StaggeredGridLayoutManager
 
-    private lateinit var mAdapter: PhotoAdapter
+    private lateinit var mAdapter: UnsplashPhotoAdapter
 
-    private lateinit var mViewModel: PickerViewModel
+    private lateinit var mViewModel: UnsplashPickerViewModel
 
     private var mIsMultipleSelection = false
 
-    private var mCurrentState = PickerState.IDLE
+    private var mCurrentState = UnsplashPickerState.IDLE
 
-    private var mPreviousState = PickerState.IDLE
+    private var mPreviousState = UnsplashPickerState.IDLE
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +45,7 @@ class PickerActivity : AppCompatActivity(), OnImageSelectedListener {
         // recycler view layout manager
         mLayoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         // recycler view adapter
-        mAdapter = PhotoAdapter(this, mIsMultipleSelection)
+        mAdapter = UnsplashPhotoAdapter(this, mIsMultipleSelection)
         mAdapter.setOnImageSelectedListener(this)
         // recycler view configuration
         picker_recycler_view.setHasFixedSize(true)
@@ -57,13 +58,13 @@ class PickerActivity : AppCompatActivity(), OnImageSelectedListener {
         picker_clear_image_view.setOnClickListener { onBackPressed() }
         picker_search_image_view.setOnClickListener {
             // updating state
-            mCurrentState = PickerState.SEARCHING
+            mCurrentState = UnsplashPickerState.SEARCHING
             updateUiFromState()
         }
-        picker_done_image_view.setOnClickListener { sendImagesAsResult() }
+        picker_done_image_view.setOnClickListener { sendPhotosAsResult() }
         // get the view model and bind search edit text
         mViewModel =
-                ViewModelProviders.of(this, Injector.createPickerViewModelFactory()).get(PickerViewModel::class.java)
+                ViewModelProviders.of(this, Injector.createPickerViewModelFactory()).get(UnsplashPickerViewModel::class.java)
         observeViewModel()
         mViewModel.bindSearch(picker_edit_text)
     }
@@ -98,21 +99,21 @@ class PickerActivity : AppCompatActivity(), OnImageSelectedListener {
         mAdapter.notifyDataSetChanged()
     }
 
-    override fun onImageSelected(nbOfSelectedImages: Int) {
+    override fun onPhotoSelected(nbOfSelectedPhotos: Int) {
         // if multiple selection
         if (mIsMultipleSelection) {
             // update the title
-            picker_title_text_view.text = when (nbOfSelectedImages) {
+            picker_title_text_view.text = when (nbOfSelectedPhotos) {
                 0 -> getString(R.string.unsplash)
                 1 -> getString(R.string.photo_selected)
-                else -> getString(R.string.photos_selected, nbOfSelectedImages)
+                else -> getString(R.string.photos_selected, nbOfSelectedPhotos)
             }
             // updating state
-            if (nbOfSelectedImages > 0) {
+            if (nbOfSelectedPhotos > 0) {
                 // only once, ignoring all subsequent photo selections
-                if (mCurrentState != PickerState.PHOTO_SELECTED) {
+                if (mCurrentState != UnsplashPickerState.PHOTO_SELECTED) {
                     mPreviousState = mCurrentState
-                    mCurrentState = PickerState.PHOTO_SELECTED
+                    mCurrentState = UnsplashPickerState.PHOTO_SELECTED
                 }
                 updateUiFromState()
             } else { // no photo selected means un-selection
@@ -120,47 +121,47 @@ class PickerActivity : AppCompatActivity(), OnImageSelectedListener {
             }
         }
         // if single selection send selected photo as a result
-        else if (nbOfSelectedImages > 0) {
-            sendImagesAsResult()
+        else if (nbOfSelectedPhotos > 0) {
+            sendPhotosAsResult()
         }
     }
 
     /**
      * Sends images in the result intent as a result for the calling activity.
      */
-    private fun sendImagesAsResult() {
-        val images: ArrayList<Image> = mAdapter.getImages()
+    private fun sendPhotosAsResult() {
+        val photos: ArrayList<UnsplashPhoto> = mAdapter.getImages()
         val data = Intent()
-        data.putExtra(EXTRA_IMAGES, images)
+        data.putExtra(EXTRA_IMAGES, photos)
         setResult(Activity.RESULT_OK, data)
         finish()
     }
 
-    override fun onImageLongPress(imageView: ImageView, url: String) {
-        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, imageView as View, "image")
-        startActivity(ImageShowActivity.getStartingIntent(this, url), options.toBundle())
+    override fun onPhotoLongPress(imageView: ImageView, url: String) {
+        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, imageView as View, "photo")
+        startActivity(PhotoShowActivity.getStartingIntent(this, url), options.toBundle())
     }
 
     override fun onBackPressed() {
         when (mCurrentState) {
-            PickerState.IDLE -> {
+            UnsplashPickerState.IDLE -> {
                 super.onBackPressed()
             }
-            PickerState.SEARCHING -> {
+            UnsplashPickerState.SEARCHING -> {
                 // updating states
-                mCurrentState = PickerState.IDLE
-                mPreviousState = PickerState.SEARCHING
+                mCurrentState = UnsplashPickerState.IDLE
+                mPreviousState = UnsplashPickerState.SEARCHING
                 // updating ui
                 updateUiFromState()
             }
-            PickerState.PHOTO_SELECTED -> {
+            UnsplashPickerState.PHOTO_SELECTED -> {
                 // updating states
-                mCurrentState = if (mPreviousState == PickerState.SEARCHING) {
-                    PickerState.SEARCHING
+                mCurrentState = if (mPreviousState == UnsplashPickerState.SEARCHING) {
+                    UnsplashPickerState.SEARCHING
                 } else {
-                    PickerState.IDLE
+                    UnsplashPickerState.IDLE
                 }
-                mPreviousState = PickerState.PHOTO_SELECTED
+                mPreviousState = UnsplashPickerState.PHOTO_SELECTED
                 // updating ui
                 updateUiFromState()
             }
@@ -173,7 +174,7 @@ class PickerActivity : AppCompatActivity(), OnImageSelectedListener {
 
     private fun updateUiFromState() {
         when (mCurrentState) {
-            PickerState.IDLE -> {
+            UnsplashPickerState.IDLE -> {
                 // back and search buttons visible
                 picker_back_image_view.visibility = View.VISIBLE
                 picker_search_image_view.visibility = View.VISIBLE
@@ -195,7 +196,7 @@ class PickerActivity : AppCompatActivity(), OnImageSelectedListener {
                 mAdapter.clearSelection()
                 mAdapter.notifyDataSetChanged()
             }
-            PickerState.SEARCHING -> {
+            UnsplashPickerState.SEARCHING -> {
                 // back, cancel, done or search buttons gone
                 picker_back_image_view.visibility = View.GONE
                 picker_cancel_image_view.visibility = View.GONE
@@ -212,7 +213,7 @@ class PickerActivity : AppCompatActivity(), OnImageSelectedListener {
                 mAdapter.clearSelection()
                 mAdapter.notifyDataSetChanged()
             }
-            PickerState.PHOTO_SELECTED -> {
+            UnsplashPickerState.PHOTO_SELECTED -> {
                 // back and search buttons gone
                 picker_back_image_view.visibility = View.GONE
                 picker_search_image_view.visibility = View.GONE
@@ -240,7 +241,7 @@ class PickerActivity : AppCompatActivity(), OnImageSelectedListener {
          * @return the intent needed to come to this activity
          */
         fun getStartingIntent(callingContext: Context, isMultipleSelection: Boolean): Intent {
-            val intent = Intent(callingContext, PickerActivity::class.java)
+            val intent = Intent(callingContext, UnsplashPickerActivity::class.java)
             intent.putExtra(EXTRA_IS_MULTIPLE, isMultipleSelection)
             return intent
         }

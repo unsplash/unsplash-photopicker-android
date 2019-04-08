@@ -2,7 +2,7 @@ package com.unsplash.pickerandroid.photopicker
 
 import com.unsplash.pickerandroid.photopicker.data.NetworkEndpoints
 import com.unsplash.pickerandroid.photopicker.domain.Repository
-import com.unsplash.pickerandroid.photopicker.presentation.PickerViewModelFactory
+import com.unsplash.pickerandroid.photopicker.presentation.UnsplashPickerViewModelFactory
 import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -64,7 +64,7 @@ object Injector {
         return Repository(createNetworkEndpoints())
     }
 
-    fun createPickerViewModelFactory(): PickerViewModelFactory {
-        return PickerViewModelFactory(createRepository())
+    fun createPickerViewModelFactory(): UnsplashPickerViewModelFactory {
+        return UnsplashPickerViewModelFactory(createRepository())
     }
 }

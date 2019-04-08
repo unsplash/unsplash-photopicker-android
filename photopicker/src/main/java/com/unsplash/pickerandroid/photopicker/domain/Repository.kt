@@ -3,7 +3,7 @@ package com.unsplash.pickerandroid.photopicker.domain
 import androidx.paging.PagedList
 import androidx.paging.RxPagedListBuilder
 import com.unsplash.pickerandroid.photopicker.data.NetworkEndpoints
-import com.unsplash.pickerandroid.photopicker.data.Photo
+import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
 import io.reactivex.Observable
 
 /**
@@ -11,7 +11,7 @@ import io.reactivex.Observable
  */
 class Repository constructor(private val networkEndpoints: NetworkEndpoints) {
 
-    fun loadPhotos(pageSize: Int): Observable<PagedList<Photo>> {
+    fun loadPhotos(pageSize: Int): Observable<PagedList<UnsplashPhoto>> {
         return RxPagedListBuilder(
             LoadPhotoDataSourceFactory(networkEndpoints),
             PagedList.Config.Builder()
@@ -21,7 +21,7 @@ class Repository constructor(private val networkEndpoints: NetworkEndpoints) {
         ).buildObservable()
     }
 
-    fun searchPhotos(criteria: String, pageSize: Int): Observable<PagedList<Photo>> {
+    fun searchPhotos(criteria: String, pageSize: Int): Observable<PagedList<UnsplashPhoto>> {
         return RxPagedListBuilder(
             SearchPhotoDataSourceFactory(networkEndpoints, criteria),
             PagedList.Config.Builder()

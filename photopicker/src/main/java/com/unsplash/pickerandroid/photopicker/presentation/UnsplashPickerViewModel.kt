@@ -7,7 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.paging.PagedList
 import com.jakewharton.rxbinding2.widget.RxTextView
 import com.unsplash.pickerandroid.photopicker.UnsplashPhotoPicker
-import com.unsplash.pickerandroid.photopicker.data.Photo
+import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
 import com.unsplash.pickerandroid.photopicker.domain.Repository
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -18,13 +18,13 @@ import java.util.concurrent.TimeUnit
  * This will use the repository to fetch the photos depending on the search criteria.
  * This is using rx binding.
  */
-class PickerViewModel constructor(private val repository: Repository) : BaseViewModel() {
+class UnsplashPickerViewModel constructor(private val repository: Repository) : BaseViewModel() {
 
-    private val mPhotosLiveData = MutableLiveData<PagedList<Photo>>()
-    val photosLiveData: LiveData<PagedList<Photo>> get() = mPhotosLiveData
+    private val mPhotosLiveData = MutableLiveData<PagedList<UnsplashPhoto>>()
+    val photosLiveData: LiveData<PagedList<UnsplashPhoto>> get() = mPhotosLiveData
 
     override fun getTag(): String {
-        return PickerViewModel::class.java.simpleName
+        return UnsplashPickerViewModel::class.java.simpleName
     }
 
     /**
@@ -44,8 +44,8 @@ class PickerViewModel constructor(private val repository: Repository) : BaseView
                 if (TextUtils.isEmpty(text)) repository.loadPhotos(UnsplashPhotoPicker.getPageSize())
                 else repository.searchPhotos(text.toString(), UnsplashPhotoPicker.getPageSize())
             }
-            .subscribe(object : BaseObserver<PagedList<Photo>>() {
-                override fun onSuccess(data: PagedList<Photo>?) {
+            .subscribe(object : BaseObserver<PagedList<UnsplashPhoto>>() {
+                override fun onSuccess(data: PagedList<UnsplashPhoto>?) {
                     mPhotosLiveData.postValue(data)
                 }
             })

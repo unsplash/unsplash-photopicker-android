@@ -5,8 +5,8 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
-import com.unsplash.pickerandroid.photopicker.presentation.Image
-import com.unsplash.pickerandroid.photopicker.presentation.PickerActivity
+import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
+import com.unsplash.pickerandroid.photopicker.presentation.UnsplashPickerActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity() {
         // we are expecting a result from it so we start it for result
         main_pick_button.setOnClickListener {
             startActivityForResult(
-                PickerActivity.getStartingIntent(
+                UnsplashPickerActivity.getStartingIntent(
                     this,
                     !main_single_radio_button.isChecked
                 ), REQUEST_CODE
@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE) {
-            val images: ArrayList<Image>? = data?.getParcelableArrayListExtra(PickerActivity.EXTRA_IMAGES)
+            val images: ArrayList<UnsplashPhoto>? = data?.getParcelableArrayListExtra(UnsplashPickerActivity.EXTRA_IMAGES)
             Toast.makeText(this, "number of selected images: " + images?.size, Toast.LENGTH_SHORT).show()
         }
     }

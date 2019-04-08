@@ -8,7 +8,7 @@ import com.squareup.picasso.Picasso
 import com.unsplash.pickerandroid.photopicker.R
 import kotlinx.android.synthetic.main.activity_image_show.*
 
-class ImageShowActivity : AppCompatActivity() {
+class PhotoShowActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +34,7 @@ class ImageShowActivity : AppCompatActivity() {
          * @return the intent needed to come to this activity
          */
         fun getStartingIntent(callingContext: Context, url: String): Intent {
-            val intent = Intent(callingContext, ImageShowActivity::class.java)
+            val intent = Intent(callingContext, PhotoShowActivity::class.java)
             intent.putExtra(EXTRA_URL, url)
             return intent
         }

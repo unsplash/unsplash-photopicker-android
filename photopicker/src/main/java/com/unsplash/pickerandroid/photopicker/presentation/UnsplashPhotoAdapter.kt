@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import com.unsplash.pickerandroid.photopicker.R
-import com.unsplash.pickerandroid.photopicker.data.Photo
+import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
 import kotlinx.android.synthetic.main.item_photo.view.*
 
 /**
@@ -20,16 +20,16 @@ import kotlinx.android.synthetic.main.item_photo.view.*
  * This is using the Android paging library to display an infinite list of photos.
  * This deals with either a single or multiple selection list.
  */
-class PhotoAdapter constructor(context: Context, private val isMultipleSelection: Boolean) :
-    PagedListAdapter<Photo, PhotoAdapter.PhotoViewHolder>(COMPARATOR) {
+class UnsplashPhotoAdapter constructor(context: Context, private val isMultipleSelection: Boolean) :
+    PagedListAdapter<UnsplashPhoto, UnsplashPhotoAdapter.PhotoViewHolder>(COMPARATOR) {
 
     private val mLayoutInflater: LayoutInflater = LayoutInflater.from(context)
 
     private val mSelectedIndexes = ArrayList<Int>()
 
-    private val mSelectedImages = ArrayList<Image>()
+    private val mSelectedImages = ArrayList<UnsplashPhoto>()
 
-    private var mOnImageSelectedListener: OnImageSelectedListener? = null
+    private var mOnPhotoSelectedListener: OnPhotoSelectedListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoViewHolder {
         return PhotoViewHolder(mLayoutInflater.inflate(R.layout.item_photo, parent, false))
@@ -37,8 +37,7 @@ class PhotoAdapter constructor(context: Context, private val isMultipleSelection
 
     override fun onBindViewHolder(holder: PhotoViewHolder, position: Int) {
         // item
-        val photo = getItem(position)
-        if (photo != null) {
+        getItem(position)?.let { photo ->
             // image
             holder.imageView.aspectRatio = photo.height.toDouble() / photo.width.toDouble()
             holder.itemView.setBackgroundColor(Color.parseColor(photo.color))
@@ -63,11 +62,13 @@ class PhotoAdapter constructor(context: Context, private val isMultipleSelection
                 if (isMultipleSelection) {
                     notifyDataSetChanged()
                 }
-                mOnImageSelectedListener?.onImageSelected(mSelectedIndexes.size)
+                mOnPhotoSelectedListener?.onPhotoSelected(mSelectedIndexes.size)
                 // change title text
             }
             holder.itemView.setOnLongClickListener {
-                mOnImageSelectedListener?.onImageLongPress(holder.imageView, photo.urls.regular)
+                photo.urls.regular?.let {
+                    mOnPhotoSelectedListener?.onPhotoLongPress(holder.imageView, it)
+                }
                 false
             }
         }
@@ -76,22 +77,11 @@ class PhotoAdapter constructor(context: Context, private val isMultipleSelection
     /**
      * Getter for the selected images.
      */
-    fun getImages(): ArrayList<Image> {
+    fun getImages(): ArrayList<UnsplashPhoto> {
         mSelectedImages.clear()
         for (index in mSelectedIndexes) {
-            if (currentList != null && currentList!![index] != null) {
-                val photo = currentList!![index]!!
-                mSelectedImages.add(
-                    Image(
-                        photo.user.name,
-                        photo.urls.thumb,
-                        photo.urls.small,
-                        photo.urls.regular,
-                        photo.urls.full,
-                        photo.urls.raw,
-                        photo.links.download
-                    )
-                )
+            currentList?.get(index)?.let {
+                mSelectedImages.add(it)
             }
         }
         return mSelectedImages
@@ -102,23 +92,23 @@ class PhotoAdapter constructor(context: Context, private val isMultipleSelection
         mSelectedIndexes.clear()
     }
 
-    fun setOnImageSelectedListener(onImageSelectedListener: OnImageSelectedListener) {
-        mOnImageSelectedListener = onImageSelectedListener
+    fun setOnImageSelectedListener(onPhotoSelectedListener: OnPhotoSelectedListener) {
+        mOnPhotoSelectedListener = onPhotoSelectedListener
     }
 
     companion object {
         // diff util comparator
-        val COMPARATOR = object : DiffUtil.ItemCallback<Photo>() {
-            override fun areContentsTheSame(oldItem: Photo, newItem: Photo): Boolean =
+        val COMPARATOR = object : DiffUtil.ItemCallback<UnsplashPhoto>() {
+            override fun areContentsTheSame(oldItem: UnsplashPhoto, newItem: UnsplashPhoto): Boolean =
                 oldItem == newItem
 
-            override fun areItemsTheSame(oldItem: Photo, newItem: Photo): Boolean =
+            override fun areItemsTheSame(oldItem: UnsplashPhoto, newItem: UnsplashPhoto): Boolean =
                 oldItem == newItem
         }
     }
 
     /**
-     * Photo view holder.
+     * UnsplashPhoto view holder.
      */
     class PhotoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val imageView: AspectRatioImageView = view.item_photo_image_view
