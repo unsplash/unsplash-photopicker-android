@@ -9,7 +9,7 @@
 
     <com.unsplash.pickerandroid.photopicker.presentation.AspectRatioImageView
             android:contentDescription="@string/photo"
-            android:id="@+id/item_photo_image_view"
+            android:id="@+id/item_unsplash_photo_image_view"
             android:transitionName="photo"
             android:layout_width="0dp"
             android:scaleType="centerCrop"
@@ -26,8 +26,8 @@
             android:id="@+id/guideline"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/item_photo_image_view"
-            app:layout_constraintBottom_toBottomOf="@+id/item_photo_image_view"/>
+            app:layout_constraintTop_toTopOf="@+id/item_unsplash_photo_image_view"
+            app:layout_constraintBottom_toBottomOf="@+id/item_unsplash_photo_image_view"/>
 
     <View
             android:layout_width="0dp"
@@ -39,7 +39,7 @@
             app:layout_constraintBottom_toBottomOf="parent"/>
 
     <TextView
-            android:id="@+id/item_photo_text_view"
+            android:id="@+id/item_unsplash_photo_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@android:color/white"
@@ -51,7 +51,7 @@
             android:layout_margin="8dp"
             android:ellipsize="end"
             android:maxLines="1"
-            app:layout_constraintRight_toLeftOf="@+id/item_photo_checked_image_view"
+            app:layout_constraintRight_toLeftOf="@+id/item_unsplash_photo_checked_image_view"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constrainedWidth="true"
             app:layout_constraintHorizontal_bias="0.0"
@@ -61,25 +61,25 @@
             tools:text="Leeroy Jenkins"/>
 
     <View
-            android:id="@+id/item_photo_overlay"
+            android:id="@+id/item_unsplash_photo_overlay"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:visibility="invisible"
-            app:layout_constraintRight_toRightOf="@+id/item_photo_image_view"
-            app:layout_constraintTop_toTopOf="@+id/item_photo_image_view"
-            app:layout_constraintLeft_toLeftOf="@+id/item_photo_image_view"
-            app:layout_constraintBottom_toBottomOf="@+id/item_photo_image_view"
+            app:layout_constraintRight_toRightOf="@+id/item_unsplash_photo_image_view"
+            app:layout_constraintTop_toTopOf="@+id/item_unsplash_photo_image_view"
+            app:layout_constraintLeft_toLeftOf="@+id/item_unsplash_photo_image_view"
+            app:layout_constraintBottom_toBottomOf="@+id/item_unsplash_photo_image_view"
             android:background="@color/pickerColorTransparentGrey"/>
 
     <ImageView
             android:contentDescription="@string/checked"
-            android:id="@+id/item_photo_checked_image_view"
+            android:id="@+id/item_unsplash_photo_checked_image_view"
             android:layout_margin="8dp"
             android:elevation="12dp"
             android:visibility="invisible"
             android:src="@drawable/ic_check_circle_24dp"
-            app:layout_constraintBottom_toBottomOf="@+id/item_photo_image_view"
-            app:layout_constraintRight_toRightOf="@+id/item_photo_image_view"
+            app:layout_constraintBottom_toBottomOf="@+id/item_unsplash_photo_image_view"
+            app:layout_constraintRight_toRightOf="@+id/item_unsplash_photo_image_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

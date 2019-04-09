@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import com.unsplash.pickerandroid.photopicker.R
 import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
-import kotlinx.android.synthetic.main.item_photo.view.*
+import kotlinx.android.synthetic.main.item_unsplash_photo.view.*
 
 /**
  * The photos recycler view adapter.
@@ -32,7 +32,7 @@ class UnsplashPhotoAdapter constructor(context: Context, private val isMultipleS
     private var mOnPhotoSelectedListener: OnPhotoSelectedListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoViewHolder {
-        return PhotoViewHolder(mLayoutInflater.inflate(R.layout.item_photo, parent, false))
+        return PhotoViewHolder(mLayoutInflater.inflate(R.layout.item_unsplash_photo, parent, false))
     }
 
     override fun onBindViewHolder(holder: PhotoViewHolder, position: Int) {
@@ -111,9 +111,9 @@ class UnsplashPhotoAdapter constructor(context: Context, private val isMultipleS
      * UnsplashPhoto view holder.
      */
     class PhotoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val imageView: AspectRatioImageView = view.item_photo_image_view
-        val txtView: TextView = view.item_photo_text_view
-        val checkedImageView: ImageView = view.item_photo_checked_image_view
-        val overlay: View = view.item_photo_overlay
+        val imageView: AspectRatioImageView = view.item_unsplash_photo_image_view
+        val txtView: TextView = view.item_unsplash_photo_text_view
+        val checkedImageView: ImageView = view.item_unsplash_photo_checked_image_view
+        val overlay: View = view.item_unsplash_photo_overlay
     }
 }
