@@ -5,7 +5,8 @@
     <color name="colorPrimaryDark">#000000</color>
     <color name="colorAccent">#181818</color>
     <!--Please do not override those colors-->
-    <color name="pickerColorTransparentGrey">#77cccccc</color>
-    <color name="pickerColorBlurredGrey">#ddaaaaaa</color>
-    <color name="pickerColorTransparentBlack">#77000000</color>
+    <color name="pickerColorBackground">#ffffffff</color>
+    <color name="pickerColorDarkOverlay">#dd000000</color>
+    <color name="pickerColorGradientOverlay">#44000000</color>
+    <color name="pickerColorSelectedOverlay">#66ffffff</color>
 </resources>

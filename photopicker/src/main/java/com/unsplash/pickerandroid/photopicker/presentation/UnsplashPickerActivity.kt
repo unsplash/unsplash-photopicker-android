@@ -138,8 +138,7 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
     }
 
     override fun onPhotoLongPress(imageView: ImageView, url: String) {
-        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, imageView as View, "photo")
-        startActivity(PhotoShowActivity.getStartingIntent(this, url), options.toBundle())
+        startActivity(PhotoShowActivity.getStartingIntent(this, url))
     }
 
     override fun onBackPressed() {

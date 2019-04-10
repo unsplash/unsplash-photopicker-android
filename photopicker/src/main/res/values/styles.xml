@@ -18,6 +18,6 @@
 
     <style name="AppTheme.NoActionBar.Transparent">
         <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowBackground">@color/pickerColorBlurredGrey</item>
+        <item name="android:windowBackground">@color/pickerColorDarkOverlay</item>
     </style>
 </resources>

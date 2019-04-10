@@ -69,7 +69,7 @@
             app:layout_constraintTop_toTopOf="@+id/item_unsplash_photo_image_view"
             app:layout_constraintLeft_toLeftOf="@+id/item_unsplash_photo_image_view"
             app:layout_constraintBottom_toBottomOf="@+id/item_unsplash_photo_image_view"
-            android:background="@color/pickerColorTransparentGrey"/>
+            android:background="@color/pickerColorSelectedOverlay"/>
 
     <ImageView
             android:contentDescription="@string/checked"

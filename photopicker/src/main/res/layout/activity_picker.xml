@@ -105,10 +105,8 @@
     <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/unsplash_picker_recycler_view"
             android:layout_width="0dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:paddingLeft="4dp"
-            android:paddingRight="4dp"
+            android:padding="4dp"
+            android:clipToPadding="false"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -130,7 +128,7 @@
 
     <LinearLayout
             android:id="@+id/unsplash_picker_progress_bar_layout"
-            android:background="@color/pickerColorTransparentGrey"
+            android:background="@color/pickerColorBackground"
             android:layout_width="0dp"
             android:orientation="vertical"
             android:focusable="true"
