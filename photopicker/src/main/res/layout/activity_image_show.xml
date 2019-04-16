@@ -24,7 +24,6 @@
             android:id="@+id/image_show_view"
             android:layout_width="0dp"
             android:layout_margin="16dp"
-            android:transitionName="photo"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"

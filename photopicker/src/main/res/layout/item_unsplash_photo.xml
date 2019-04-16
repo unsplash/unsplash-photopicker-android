@@ -10,7 +10,6 @@
     <com.unsplash.pickerandroid.photopicker.presentation.AspectRatioImageView
             android:contentDescription="@string/photo"
             android:id="@+id/item_unsplash_photo_image_view"
-            android:transitionName="photo"
             android:layout_width="0dp"
             android:scaleType="centerCrop"
             android:layout_height="wrap_content"
