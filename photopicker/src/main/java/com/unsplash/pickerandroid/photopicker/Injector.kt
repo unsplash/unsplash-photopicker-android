@@ -39,7 +39,7 @@ object Injector {
     private fun createHttpClient(): OkHttpClient {
         val builder = OkHttpClient.Builder()
         builder.addNetworkInterceptor(createHeaderInterceptor())
-        if (BuildConfig.DEBUG) {
+        if (UnsplashPhotoPicker.isLoggingEnabled()) {
             builder.addNetworkInterceptor(createLoggingInterceptor())
         }
         val cacheSize = 10 * 1024 * 1024 // 10 MB of cache

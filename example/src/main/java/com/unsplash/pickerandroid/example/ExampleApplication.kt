@@ -12,7 +12,8 @@ class ExampleApplication : Application() {
             this,
             "your access key",
             "your secret key"
-            /* optional page size */
+            /* optional page size (number of photos per page) */
         )
+            /* .setLoggingEnabled(true) // if you want to see the http requests */
     }
 }

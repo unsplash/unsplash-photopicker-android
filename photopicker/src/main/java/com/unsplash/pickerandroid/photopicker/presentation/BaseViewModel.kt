@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.unsplash.pickerandroid.photopicker.UnsplashPhotoPicker
 import io.reactivex.Observer
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
@@ -49,7 +50,9 @@ abstract class BaseViewModel : ViewModel() {
         }
 
         override fun onNext(value: Data?) {
-            Log.i(getTag(), value.toString())
+            if (UnsplashPhotoPicker.isLoggingEnabled()) {
+                Log.i(getTag(), value.toString())
+            }
             // hiding the loading
             mLoadingLiveData.postValue(false)
             // success
@@ -57,7 +60,7 @@ abstract class BaseViewModel : ViewModel() {
         }
 
         override fun onError(e: Throwable?) {
-            Log.e(getTag(), "error", e)
+            Log.e(getTag(), e?.message, e)
             // hiding the loading
             mLoadingLiveData.postValue(false)
             // posting the error
