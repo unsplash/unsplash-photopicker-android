@@ -50,4 +50,16 @@ class UnsplashPickerViewModel constructor(private val repository: Repository) : 
                 }
             })
     }
+
+    /**
+     * To abide by the API guidelines,
+     * you need to trigger a GET request to this endpoint every time your application performs a download of a photo
+     *
+     * @param photos the list of selected photos
+     */
+    fun trackDownloads(photos: ArrayList<UnsplashPhoto>) {
+        for (photo in photos) {
+            repository.trackDownload(photo.links.download_location)
+        }
+    }
 }

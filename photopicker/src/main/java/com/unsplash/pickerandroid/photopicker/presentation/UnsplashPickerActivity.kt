@@ -10,7 +10,6 @@ import android.text.TextUtils
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.core.app.ActivityOptionsCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -64,7 +63,8 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
         unsplash_picker_done_image_view.setOnClickListener { sendPhotosAsResult() }
         // get the view model and bind search edit text
         mViewModel =
-                ViewModelProviders.of(this, Injector.createPickerViewModelFactory()).get(UnsplashPickerViewModel::class.java)
+                ViewModelProviders.of(this, Injector.createPickerViewModelFactory())
+                    .get(UnsplashPickerViewModel::class.java)
         observeViewModel()
         mViewModel.bindSearch(unsplash_picker_edit_text)
     }
@@ -130,7 +130,11 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
      * Sends images in the result intent as a result for the calling activity.
      */
     private fun sendPhotosAsResult() {
+        // get the selected photos
         val photos: ArrayList<UnsplashPhoto> = mAdapter.getImages()
+        // track the downloads
+        mViewModel.trackDownloads(photos)
+        // send them back to the calling activity
         val data = Intent()
         data.putExtra(EXTRA_PHOTOS, photos)
         setResult(Activity.RESULT_OK, data)
