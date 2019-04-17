@@ -4,6 +4,10 @@
 
 UnsplashPhotoPicker is an Android UI component that allows you to quickly search the Unsplash library for free high-quality photos with just a few lines of code.
 
+iOS photo picker [here](https://github.com/unsplash/unsplash-photopicker-ios).
+
+![Unsplash Photo Picker for Android preview](https://github.com/unsplash/unsplash-photopicker-android/blob/dev/unsplash-photo-picker-android.png "Unsplash Photo Picker for Android")
+
 ## Table of Contents
 
 - [Description](#description)
@@ -104,7 +108,7 @@ See [UnsplashPhoto.kt](https://github.com/unsplash/unsplash-photopicker-android/
 
 MIT License
 
-Copyright (c) 2018 Unsplash Inc.
+Copyright (c) 2019 Unsplash Inc.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
