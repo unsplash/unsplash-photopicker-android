@@ -40,7 +40,7 @@ To integrate `UnsplashPhotoPicker` into your Android Studio project using Gradle
 ```gradle
 allprojects {
    repositories {
-      maven { url 'https://jitpack.io' }
+      maven { url  "https://dl.bintray.com/unsplash/unsplash-photopicker-android" }
    }
 }
 ```
@@ -48,7 +48,7 @@ And in your app module `build.gradle` file:
 
 ```gradle
 dependencies {
-   implementation 'com.github.unsplash:unsplash-photopicker-android:x.y.z'
+   implementation 'com.unsplash.pickerandroid:photopicker:x.y.z'
 }
 ```
 
