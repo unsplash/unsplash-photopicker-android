@@ -1,6 +1,7 @@
 # unsplash-photopicker-android
 
 [![License](https://img.shields.io/github/license/unsplash/unsplash-photopicker-android.svg?style=flat-square)](https://github.com/unsplash/unsplash-photopicker-android)
+[![Download](https://api.bintray.com/packages/unsplash/unsplash-photopicker-android/com.unsplash.pickerandroid.photopicker/images/download.svg) ](https://bintray.com/unsplash/unsplash-photopicker-android/com.unsplash.pickerandroid.photopicker/_latestVersion)
 
 UnsplashPhotoPicker is an Android UI component that allows you to quickly search the Unsplash library for free high-quality photos with just a few lines of code.
 
@@ -40,7 +41,7 @@ To integrate `UnsplashPhotoPicker` into your Android Studio project using Gradle
 ```gradle
 allprojects {
    repositories {
-      maven { url 'https://jitpack.io' }
+      maven { url  "https://dl.bintray.com/unsplash/unsplash-photopicker-android" }
    }
 }
 ```
@@ -48,7 +49,7 @@ And in your app module `build.gradle` file:
 
 ```gradle
 dependencies {
-   implementation 'com.github.unsplash:unsplash-photopicker-android:x.y.z'
+   implementation 'com.unsplash.pickerandroid:photopicker:x.y.z'
 }
 ```
 
@@ -102,7 +103,7 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
 }
 ```
 
-See [UnsplashPhoto.kt](https://github.com/unsplash/unsplash-photopicker-android/blob/dev/photopicker/src/main/java/com/unsplash/pickerandroid/photopicker/data/UnsplashPhoto.kt) for more details.
+See [UnsplashPhoto.kt](https://github.com/unsplash/unsplash-photopicker-android/blob/master/photopicker/src/main/java/com/unsplash/pickerandroid/photopicker/data/UnsplashPhoto.kt) for more details.
 
 ## License
 
