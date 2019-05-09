@@ -30,6 +30,7 @@ iOS photo picker [here](https://github.com/unsplash/unsplash-photopicker-ios).
 - Android minimum API 21+
 - Android Studio 3.3+
 - Kotlin 1.3+
+- Use AndroidX artifacts when creating your project
 - [Unsplash API Access Key and Secret Key](https://unsplash.com/documentation#registering-your-application)
 
 ## Installation
