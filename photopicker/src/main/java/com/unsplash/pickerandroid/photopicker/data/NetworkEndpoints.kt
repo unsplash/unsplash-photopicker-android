@@ -1,8 +1,6 @@
 package com.unsplash.pickerandroid.photopicker.data
 
-import io.reactivex.Completable
-import io.reactivex.Observable
-import retrofit2.Response
+import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
 import retrofit2.http.Url
@@ -17,7 +15,7 @@ interface NetworkEndpoints {
         @Query("client_id") clientId: String,
         @Query("page") page: Int,
         @Query("per_page") pageSize: Int
-    ): Observable<Response<List<UnsplashPhoto>>>
+    ): Call<List<UnsplashPhoto>>
 
     @GET("search/photos")
     fun searchPhotos(
@@ -25,10 +23,10 @@ interface NetworkEndpoints {
         @Query("query") criteria: String,
         @Query("page") page: Int,
         @Query("per_page") pageSize: Int
-    ): Observable<Response<SearchResponse>>
+    ): Call<SearchResponse>
 
     @GET
-    fun trackDownload(@Url url: String): Completable
+    fun trackDownload(@Url url: String): Call<Void>
 
     companion object {
         const val BASE_URL = "https://api.unsplash.com/"

@@ -6,10 +6,10 @@ import androidx.paging.RxPagedListBuilder
 import com.unsplash.pickerandroid.photopicker.UnsplashPhotoPicker
 import com.unsplash.pickerandroid.photopicker.data.NetworkEndpoints
 import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
-import io.reactivex.CompletableObserver
 import io.reactivex.Observable
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 /**
  * Simple repository used as a proxy by the view models to fetch data.
@@ -40,17 +40,12 @@ class Repository constructor(private val networkEndpoints: NetworkEndpoints) {
         if (url != null) {
             val authUrl = url + "?client_id=" + UnsplashPhotoPicker.getAccessKey()
             networkEndpoints.trackDownload(authUrl)
-                .observeOn(Schedulers.io())
-                .subscribeOn(Schedulers.io())
-                .subscribe(object : CompletableObserver {
-                    override fun onComplete() { /* do nothing */
+                .enqueue(object : Callback<Void> {
+                    override fun onFailure(call: Call<Void>, t: Throwable) {
+                        Log.e(Repository::class.java.simpleName, t.message, t)
                     }
 
-                    override fun onSubscribe(d: Disposable?) {  /* do nothing */
-                    }
-
-                    override fun onError(e: Throwable?) {
-                        Log.e(Repository::class.java.simpleName, e?.message, e)
+                    override fun onResponse(call: Call<Void>, response: Response<Void>) {
                     }
                 })
         }
