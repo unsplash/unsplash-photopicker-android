@@ -37,8 +37,13 @@ class LoadPhotoDataSource(private val networkEndpoints: NetworkEndpoints) : Page
                     // we update the network state to success
                     if (response.isSuccessful) {
                         lastPage = response.headers().get("x-total")?.toInt()?.div(params.requestedLoadSize)
-                        callback.onResult(response.body()!!, null, 2)
-                        networkState.postValue(NetworkState.SUCCESS)
+                        val list = response.body()!!
+                        callback.onResult(list, null, 2)
+                        if (list.isEmpty()) {
+                            networkState.postValue(NetworkState.EMPTY)
+                        } else {
+                            networkState.postValue(NetworkState.SUCCESS)
+                        }
                     }
                     // if the response is not successful
                     // we update the network state to error along with the error message

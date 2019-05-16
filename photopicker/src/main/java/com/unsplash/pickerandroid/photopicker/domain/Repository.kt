@@ -1,12 +1,13 @@
 package com.unsplash.pickerandroid.photopicker.domain
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Transformations
+import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
-import androidx.paging.RxPagedListBuilder
 import com.unsplash.pickerandroid.photopicker.UnsplashPhotoPicker
 import com.unsplash.pickerandroid.photopicker.data.NetworkEndpoints
 import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
-import io.reactivex.Observable
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -16,24 +17,30 @@ import retrofit2.Response
  */
 class Repository constructor(private val networkEndpoints: NetworkEndpoints) {
 
-    fun loadPhotos(pageSize: Int): Observable<PagedList<UnsplashPhoto>> {
-        return RxPagedListBuilder(
-            LoadPhotoDataSourceFactory(networkEndpoints),
+    fun loadPhotos(pageSize: Int): PagedListContainer<UnsplashPhoto> {
+        val sourceFactory = LoadPhotoDataSourceFactory(networkEndpoints)
+        val livePagedList = LivePagedListBuilder(
+            sourceFactory,
             PagedList.Config.Builder()
                 .setInitialLoadSizeHint(pageSize)
                 .setPageSize(pageSize)
                 .build()
-        ).buildObservable()
+        ).build()
+        return PagedListContainer(
+            livePagedList,
+            Transformations.switchMap(sourceFactory.sourceLiveData) {
+                it.networkState
+            })
     }
 
-    fun searchPhotos(criteria: String, pageSize: Int): Observable<PagedList<UnsplashPhoto>> {
-        return RxPagedListBuilder(
+    fun searchPhotos(criteria: String, pageSize: Int): LiveData<PagedList<UnsplashPhoto>> {
+        return LivePagedListBuilder(
             SearchPhotoDataSourceFactory(networkEndpoints, criteria),
             PagedList.Config.Builder()
                 .setInitialLoadSizeHint(pageSize)
                 .setPageSize(pageSize)
                 .build()
-        ).buildObservable()
+        ).build()
     }
 
     fun trackDownload(url: String?) {

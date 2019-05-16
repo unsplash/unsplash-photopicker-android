@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.unsplash.pickerandroid.photopicker.Injector
 import com.unsplash.pickerandroid.photopicker.R
 import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
+import com.unsplash.pickerandroid.photopicker.domain.Status
 import kotlinx.android.synthetic.main.activity_picker.*
 
 /**
@@ -73,19 +74,28 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
      * Observes the live data in the view model.
      */
     private fun observeViewModel() {
-        mViewModel.errorLiveData.observe(this, Observer {
-            Toast.makeText(this, "error", Toast.LENGTH_SHORT).show()
-        })
-        mViewModel.messageLiveData.observe(this, Observer {
-            Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
-        })
-        mViewModel.loadingLiveData.observe(this, Observer {
-            unsplash_picker_progress_bar_layout.visibility = if (it != null && it) View.VISIBLE else View.GONE
+        mViewModel.stateLiveData.observe(this , Observer {
+            when(it.status) {
+                Status.SUCCESS -> {
+                    unsplash_picker_no_result_text_view.visibility = View.GONE
+                    unsplash_picker_progress_bar_layout.visibility = View.GONE
+                }
+                Status.EMPTY -> {
+                    unsplash_picker_no_result_text_view.visibility = View.VISIBLE
+                    unsplash_picker_progress_bar_layout.visibility = View.GONE
+                }
+                Status.LOADING -> {
+                    unsplash_picker_no_result_text_view.visibility = View.GONE
+                    unsplash_picker_progress_bar_layout.visibility = View.VISIBLE
+                }
+                Status.FAILURE -> {
+                    unsplash_picker_no_result_text_view.visibility = View.GONE
+                    unsplash_picker_progress_bar_layout.visibility = View.GONE
+                    Toast.makeText(this, it.msg, Toast.LENGTH_SHORT).show()
+                }
+            }
         })
         mViewModel.photosLiveData.observe(this, Observer {
-            unsplash_picker_no_result_text_view.visibility =
-                    if (it == null || it.isEmpty()) View.VISIBLE
-                    else View.GONE
             mAdapter.submitList(it)
         })
     }

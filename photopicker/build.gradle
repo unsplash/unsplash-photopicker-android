@@ -37,11 +37,9 @@ dependencies {
 
     // paging
     implementation 'androidx.paging:paging-runtime:2.1.0'
-    implementation 'androidx.paging:paging-rxjava2:2.1.0'
 
     // misc
     implementation 'com.squareup.picasso:picasso:2.71828'
-    implementation 'com.jakewharton.rxbinding2:rxbinding:2.1.1'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.11.0'
 
     // lifecycle
