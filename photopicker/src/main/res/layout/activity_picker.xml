@@ -128,7 +128,7 @@
 
     <LinearLayout
             android:id="@+id/unsplash_picker_progress_bar_layout"
-            android:background="@color/pickerColorBackground"
+            android:background="@color/pickerColorSelectedOverlay"
             android:layout_width="0dp"
             android:orientation="vertical"
             android:focusable="true"
