@@ -6,7 +6,9 @@ import android.content.Intent
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Editable
 import android.text.TextUtils
+import android.text.TextWatcher
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
@@ -18,6 +20,10 @@ import com.unsplash.pickerandroid.photopicker.R
 import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
 import com.unsplash.pickerandroid.photopicker.domain.Status
 import kotlinx.android.synthetic.main.activity_picker.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 /**
  * Main screen for the picker.
@@ -67,15 +73,46 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
                 ViewModelProviders.of(this, Injector.createPickerViewModelFactory())
                     .get(UnsplashPickerViewModel::class.java)
         observeViewModel()
-        mViewModel.bindSearch(unsplash_picker_edit_text)
+        // text watcher
+        unsplash_picker_edit_text.addTextChangedListener(object : TextWatcher {
+            // init the current criteria
+            private var currentCriteria: String? = null
+
+            override fun afterTextChanged(s: Editable?) {
+                // init the new criteria
+                val newCriteria = s?.toString()?.trim()
+                // if there is a change in the text
+                if (newCriteria != currentCriteria) {
+                    // copying the text
+                    currentCriteria = newCriteria
+                    // coroutine in the main thread
+                    GlobalScope.launch(Dispatchers.Main) {
+                        // faking a debounce operator
+                        delay(500)
+                        // if nothing has change we load
+                        if (newCriteria == currentCriteria) {
+                            mViewModel.load(newCriteria)
+                        }
+                    }
+                }
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            }
+        })
+        // forcing first load
+        unsplash_picker_edit_text.setText("")
     }
 
     /**
      * Observes the live data in the view model.
      */
     private fun observeViewModel() {
-        mViewModel.stateLiveData.observe(this , Observer {
-            when(it.status) {
+        mViewModel.stateLiveData.observe(this, Observer {
+            when (it.status) {
                 Status.SUCCESS -> {
                     unsplash_picker_no_result_text_view.visibility = View.GONE
                     unsplash_picker_progress_bar_layout.visibility = View.GONE
