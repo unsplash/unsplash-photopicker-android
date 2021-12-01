@@ -29,16 +29,16 @@ class LoadPhotoDataSource(private val networkEndpoints: NetworkEndpoints) : Page
                     // do nothing on this terminal event
                 }
 
-                override fun onSubscribe(d: Disposable?) {
+                override fun onSubscribe(d: Disposable) {
                     // we don't keep the disposable
                 }
 
-                override fun onNext(response: Response<List<UnsplashPhoto>>?) {
+                override fun onNext(response: Response<List<UnsplashPhoto>>) {
                     // if the response is successful
                     // we get the last page number
                     // we push the result on the paging callback
                     // we update the network state to success
-                    if (response != null && response.isSuccessful) {
+                    if (response.isSuccessful) {
                         lastPage = response.headers().get("x-total")?.toInt()?.div(params.requestedLoadSize)
                         callback.onResult(response.body()!!, null, 2)
                         networkState.postValue(NetworkState.SUCCESS)
@@ -46,13 +46,13 @@ class LoadPhotoDataSource(private val networkEndpoints: NetworkEndpoints) : Page
                     // if the response is not successful
                     // we update the network state to error along with the error message
                     else {
-                        networkState.postValue(NetworkState.error(response?.message()))
+                        networkState.postValue(NetworkState.error(response.message()))
                     }
                 }
 
-                override fun onError(e: Throwable?) {
+                override fun onError(e: Throwable) {
                     // we update the network state to error along with the error message
-                    networkState.postValue(NetworkState.error(e?.message))
+                    networkState.postValue(NetworkState.error(e.message))
                 }
             })
     }
@@ -67,16 +67,16 @@ class LoadPhotoDataSource(private val networkEndpoints: NetworkEndpoints) : Page
                     // do nothing on this terminal event
                 }
 
-                override fun onSubscribe(d: Disposable?) {
+                override fun onSubscribe(d: Disposable) {
                     // we don't keep the disposable
                 }
 
-                override fun onNext(response: Response<List<UnsplashPhoto>>?) {
+                override fun onNext(response: Response<List<UnsplashPhoto>>) {
                     // if the response is successful
                     // we get the next page number
                     // we push the result on the paging callback
                     // we update the network state to success
-                    if (response != null && response.isSuccessful) {
+                    if (response.isSuccessful) {
                         val nextPage = if (params.key == lastPage) null else params.key + 1
                         callback.onResult(response.body()!!, nextPage)
                         networkState.postValue(NetworkState.SUCCESS)
@@ -84,13 +84,13 @@ class LoadPhotoDataSource(private val networkEndpoints: NetworkEndpoints) : Page
                     // if the response is not successful
                     // we update the network state to error along with the error message
                     else {
-                        networkState.postValue(NetworkState.error(response?.message()))
+                        networkState.postValue(NetworkState.error(response.message()))
                     }
                 }
 
-                override fun onError(e: Throwable?) {
+                override fun onError(e: Throwable) {
                     // we update the network state to error along with the error message
-                    networkState.postValue(NetworkState.error(e?.message))
+                    networkState.postValue(NetworkState.error(e.message))
                 }
             })
     }
