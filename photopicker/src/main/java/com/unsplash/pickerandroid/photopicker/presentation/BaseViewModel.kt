@@ -45,11 +45,11 @@ abstract class BaseViewModel : ViewModel() {
         override fun onComplete() {
         }
 
-        override fun onSubscribe(d: Disposable?) {
+        override fun onSubscribe(d: Disposable) {
             mCompositeDisposable.add(d)
         }
 
-        override fun onNext(value: Data?) {
+        override fun onNext(value: Data) {
             if (UnsplashPhotoPicker.isLoggingEnabled()) {
                 Log.i(getTag(), value.toString())
             }
@@ -59,8 +59,8 @@ abstract class BaseViewModel : ViewModel() {
             onSuccess(value)
         }
 
-        override fun onError(e: Throwable?) {
-            Log.e(getTag(), e?.message, e)
+        override fun onError(e: Throwable) {
+            Log.e(getTag(), e.message, e)
             // hiding the loading
             mLoadingLiveData.postValue(false)
             // posting the error
