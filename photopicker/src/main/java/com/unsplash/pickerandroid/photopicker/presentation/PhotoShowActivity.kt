@@ -5,19 +5,22 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.squareup.picasso.Picasso
-import com.unsplash.pickerandroid.photopicker.R
-import kotlinx.android.synthetic.main.activity_image_show.*
+import com.unsplash.pickerandroid.photopicker.databinding.ActivityImageShowBinding
 
 class PhotoShowActivity : AppCompatActivity() {
 
+    private val binding = ActivityImageShowBinding.inflate(layoutInflater)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_image_show)
+        setContentView(binding.root)
+
         // loading the image thanks to its url
         Picasso.get().load(intent.getStringExtra(EXTRA_URL))
-            .into(image_show_view)
+            .into(binding.imageShowView)
+
         // click listener
-        image_show_layout.setOnClickListener { supportFinishAfterTransition() }
+        binding.imageShowLayout.setOnClickListener { supportFinishAfterTransition() }
     }
 
     override fun onBackPressed() {

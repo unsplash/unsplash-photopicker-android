@@ -4,22 +4,20 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
-import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.unsplash.pickerandroid.photopicker.Injector
 import com.unsplash.pickerandroid.photopicker.R
 import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
-import kotlinx.android.synthetic.main.activity_picker.*
+import com.unsplash.pickerandroid.photopicker.databinding.ActivityPickerBinding
 
 /**
  * Main screen for the picker.
@@ -40,9 +38,12 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
 
     private var mPreviousState = UnsplashPickerState.IDLE
 
+    private lateinit var binding : ActivityPickerBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_picker)
+        binding = ActivityPickerBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         mIsMultipleSelection = intent.getBooleanExtra(EXTRA_IS_MULTIPLE, false)
 
         // recycler view adapter
@@ -50,30 +51,30 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
         mAdapter.setOnImageSelectedListener(this)
         mAdapter.addLoadStateListener { loadState->
             if (loadState.append.endOfPaginationReached) {
-                unsplash_picker_no_result_text_view.visibility =
-                    if (mAdapter.itemCount < 1) View.VISIBLE
-                    else View.GONE
+                binding.unsplashPickerNoResultTextView.isVisible = mAdapter.itemCount < 1
             }
         }
 
         // recycler view configuration
-        unsplash_picker_recycler_view.setHasFixedSize(true)
-        unsplash_picker_recycler_view.itemAnimator = null
-        unsplash_picker_recycler_view.adapter = mAdapter
+        binding.unsplashPickerRecyclerView.apply {
+            setHasFixedSize(true)
+            itemAnimator = null
+            adapter = mAdapter
+        }
 
         // click listeners
-        unsplash_picker_back_image_view.setOnClickListener { onBackPressed() }
-        unsplash_picker_cancel_image_view.setOnClickListener { onBackPressed() }
-        unsplash_picker_clear_image_view.setOnClickListener { onBackPressed() }
-        unsplash_picker_search_image_view.setOnClickListener {
+        binding.unsplashPickerBackImageView.setOnClickListener { onBackPressed() }
+        binding.unsplashPickerCancelImageView.setOnClickListener { onBackPressed() }
+        binding.unsplashPickerClearImageView.setOnClickListener { onBackPressed() }
+        binding.unsplashPickerSearchImageView.setOnClickListener {
             // updating state
             mCurrentState = UnsplashPickerState.SEARCHING
             updateUiFromState()
         }
-        unsplash_picker_done_image_view.setOnClickListener { sendPhotosAsResult() }
+        binding.unsplashPickerDoneImageView.setOnClickListener { sendPhotosAsResult() }
 
         // get the view model and bind search edit text
-        mViewModel.bindSearch(unsplash_picker_edit_text)
+        mViewModel.bindSearch(binding.unsplashPickerEditText)
 
         observeViewModel()
     }
@@ -89,7 +90,7 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
             Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
         })
         mViewModel.loadingLiveData.observe(this, Observer {
-            unsplash_picker_progress_bar_layout.visibility = if (it != null && it) View.VISIBLE else View.GONE
+            binding.unsplashPickerProgressBarLayout.isVisible = it != null && it
         })
         mViewModel.photosLiveData.observe(this, Observer {
             mAdapter.submitData(lifecycle, it)
@@ -99,7 +100,7 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         // we want the recycler view to have 3 columns when in landscape and 2 in portrait
-        val layoutManager = unsplash_picker_recycler_view.layoutManager as GridLayoutManager
+        val layoutManager = binding.unsplashPickerRecyclerView.layoutManager as GridLayoutManager
         layoutManager.spanCount =
                 if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) 3
                 else 2
@@ -110,7 +111,7 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
         // if multiple selection
         if (mIsMultipleSelection) {
             // update the title
-            unsplash_picker_title_text_view.text = when (nbOfSelectedPhotos) {
+            binding.unsplashPickerTitleTextView.text = when (nbOfSelectedPhotos) {
                 0 -> getString(R.string.unsplash)
                 1 -> getString(R.string.photo_selected)
                 else -> getString(R.string.photos_selected, nbOfSelectedPhotos)
@@ -186,56 +187,70 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
         when (mCurrentState) {
             UnsplashPickerState.IDLE -> {
                 // back and search buttons visible
-                unsplash_picker_back_image_view.visibility = View.VISIBLE
-                unsplash_picker_search_image_view.visibility = View.VISIBLE
+                binding.unsplashPickerBackImageView.isVisible = true
+                binding.unsplashPickerSearchImageView.isVisible = true
+
                 // cancel and done buttons gone
-                unsplash_picker_cancel_image_view.visibility = View.GONE
-                unsplash_picker_done_image_view.visibility = View.GONE
+                binding.unsplashPickerCancelImageView.isVisible = false
+                binding.unsplashPickerDoneImageView.isVisible = false
+
                 // edit text cleared and gone
-                if (!TextUtils.isEmpty(unsplash_picker_edit_text.text)) {
-                    unsplash_picker_edit_text.setText("")
+                if (!TextUtils.isEmpty(binding.unsplashPickerEditText.text)) {
+                    binding.unsplashPickerEditText.setText("")
                 }
-                unsplash_picker_edit_text.visibility = View.GONE
+                binding.unsplashPickerEditText.isInvisible = false
+
                 // right clear button on top of edit text gone
-                unsplash_picker_clear_image_view.visibility = View.GONE
+                binding.unsplashPickerClearImageView.isInvisible = false
+
                 // keyboard down
-                unsplash_picker_edit_text.closeKeyboard(this)
+                binding.unsplashPickerEditText.closeKeyboard(this)
+
                 // action bar with unsplash
-                unsplash_picker_title_text_view.text = getString(R.string.unsplash)
+                binding.unsplashPickerTitleTextView.text = getString(R.string.unsplash)
+
                 // clear list selection
                 mAdapter.clearSelection()
                 mAdapter.notifyDataSetChanged()
             }
             UnsplashPickerState.SEARCHING -> {
                 // back, cancel, done or search buttons gone
-                unsplash_picker_back_image_view.visibility = View.GONE
-                unsplash_picker_cancel_image_view.visibility = View.GONE
-                unsplash_picker_done_image_view.visibility = View.GONE
-                unsplash_picker_search_image_view.visibility = View.GONE
+                binding.unsplashPickerBackImageView.isInvisible = false
+                binding.unsplashPickerCancelImageView.isInvisible = false
+                binding.unsplashPickerDoneImageView.isInvisible = false
+                binding.unsplashPickerSearchImageView.isInvisible = false
+
                 // edit text visible and focused
-                unsplash_picker_edit_text.visibility = View.VISIBLE
+                binding.unsplashPickerEditText.isVisible = true
+
                 // right clear button on top of edit text visible
-                unsplash_picker_clear_image_view.visibility = View.VISIBLE
+                binding.unsplashPickerClearImageView.isVisible = true
+
                 // keyboard up
-                unsplash_picker_edit_text.requestFocus()
-                unsplash_picker_edit_text.openKeyboard(this)
+                binding.unsplashPickerEditText.requestFocus()
+                binding.unsplashPickerEditText.openKeyboard(this)
+
                 // clear list selection
                 mAdapter.clearSelection()
                 mAdapter.notifyDataSetChanged()
             }
             UnsplashPickerState.PHOTO_SELECTED -> {
                 // back and search buttons gone
-                unsplash_picker_back_image_view.visibility = View.GONE
-                unsplash_picker_search_image_view.visibility = View.GONE
+                binding.unsplashPickerBackImageView.isVisible = false
+                binding.unsplashPickerSearchImageView.isVisible = false
+
                 // cancel and done buttons visible
-                unsplash_picker_cancel_image_view.visibility = View.VISIBLE
-                unsplash_picker_done_image_view.visibility = View.VISIBLE
+                binding.unsplashPickerCancelImageView.isVisible = true
+                binding.unsplashPickerDoneImageView.isVisible = true
+
                 // edit text gone
-                unsplash_picker_edit_text.visibility = View.GONE
+                binding.unsplashPickerEditText.isVisible = false
+
                 // right clear button on top of edit text gone
-                unsplash_picker_clear_image_view.visibility = View.GONE
+                binding.unsplashPickerClearImageView.isVisible = false
+
                 // keyboard down
-                unsplash_picker_edit_text.closeKeyboard(this)
+                binding.unsplashPickerEditText.closeKeyboard(this)
             }
         }
     }
