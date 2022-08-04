@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.paging.PagedListAdapter
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
@@ -21,7 +22,7 @@ import kotlinx.android.synthetic.main.item_unsplash_photo.view.*
  * This deals with either a single or multiple selection list.
  */
 class UnsplashPhotoAdapter constructor(context: Context, private val isMultipleSelection: Boolean) :
-    PagedListAdapter<UnsplashPhoto, UnsplashPhotoAdapter.PhotoViewHolder>(COMPARATOR) {
+    PagingDataAdapter<UnsplashPhoto, UnsplashPhotoAdapter.PhotoViewHolder>(COMPARATOR) {
 
     private val mLayoutInflater: LayoutInflater = LayoutInflater.from(context)
 
@@ -80,7 +81,7 @@ class UnsplashPhotoAdapter constructor(context: Context, private val isMultipleS
     fun getImages(): ArrayList<UnsplashPhoto> {
         mSelectedImages.clear()
         for (index in mSelectedIndexes) {
-            currentList?.get(index)?.let {
+            snapshot()[index]?.let {
                 mSelectedImages.add(it)
             }
         }

@@ -4,7 +4,9 @@ import android.text.TextUtils
 import android.widget.EditText
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.paging.PagedList
+import androidx.paging.PagingData
 import com.jakewharton.rxbinding2.widget.RxTextView
 import com.unsplash.pickerandroid.photopicker.UnsplashPhotoPicker
 import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
@@ -20,8 +22,8 @@ import java.util.concurrent.TimeUnit
  */
 class UnsplashPickerViewModel constructor(private val repository: Repository) : BaseViewModel() {
 
-    private val mPhotosLiveData = MutableLiveData<PagedList<UnsplashPhoto>>()
-    val photosLiveData: LiveData<PagedList<UnsplashPhoto>> get() = mPhotosLiveData
+    private val mPhotosLiveData = MutableLiveData<PagingData<UnsplashPhoto>>()
+    val photosLiveData: LiveData<PagingData<UnsplashPhoto>> get() = mPhotosLiveData
 
     override fun getTag(): String {
         return UnsplashPickerViewModel::class.java.simpleName
@@ -44,11 +46,14 @@ class UnsplashPickerViewModel constructor(private val repository: Repository) : 
                 if (TextUtils.isEmpty(text)) repository.loadPhotos(UnsplashPhotoPicker.getPageSize())
                 else repository.searchPhotos(text.toString(), UnsplashPhotoPicker.getPageSize())
             }
-            .subscribe(object : BaseObserver<PagedList<UnsplashPhoto>>() {
-                override fun onSuccess(data: PagedList<UnsplashPhoto>?) {
-                    mPhotosLiveData.postValue(data)
+            .subscribeOn(Schedulers.io())
+            .subscribe(
+                object : BaseObserver<PagingData<UnsplashPhoto>>() {
+                    override fun onSuccess(data: PagingData<UnsplashPhoto>) {
+                        mPhotosLiveData.postValue(data)
+                    }
                 }
-            })
+            )
     }
 
     /**

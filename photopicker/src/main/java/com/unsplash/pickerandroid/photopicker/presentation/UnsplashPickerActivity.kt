@@ -11,6 +11,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.unsplash.pickerandroid.photopicker.Injector
@@ -46,6 +47,14 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
         // recycler view adapter
         mAdapter = UnsplashPhotoAdapter(this, mIsMultipleSelection)
         mAdapter.setOnImageSelectedListener(this)
+        mAdapter.addLoadStateListener { loadState->
+            if (loadState.append.endOfPaginationReached) {
+                unsplash_picker_no_result_text_view.visibility =
+                    if (mAdapter.itemCount < 1) View.VISIBLE
+                    else View.GONE
+            }
+        }
+
         // recycler view configuration
         unsplash_picker_recycler_view.setHasFixedSize(true)
         unsplash_picker_recycler_view.itemAnimator = null
@@ -62,9 +71,8 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
         }
         unsplash_picker_done_image_view.setOnClickListener { sendPhotosAsResult() }
         // get the view model and bind search edit text
-        mViewModel =
-                ViewModelProviders.of(this, Injector.createPickerViewModelFactory())
-                    .get(UnsplashPickerViewModel::class.java)
+        mViewModel = ViewModelProvider(this, Injector.createPickerViewModelFactory())
+                .get(UnsplashPickerViewModel::class.java)
         observeViewModel()
         mViewModel.bindSearch(unsplash_picker_edit_text)
     }
@@ -83,10 +91,7 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
             unsplash_picker_progress_bar_layout.visibility = if (it != null && it) View.VISIBLE else View.GONE
         })
         mViewModel.photosLiveData.observe(this, Observer {
-            unsplash_picker_no_result_text_view.visibility =
-                    if (it == null || it.isEmpty()) View.VISIBLE
-                    else View.GONE
-            mAdapter.submitList(it)
+            mAdapter.submitData(lifecycle, it)
         })
     }
 

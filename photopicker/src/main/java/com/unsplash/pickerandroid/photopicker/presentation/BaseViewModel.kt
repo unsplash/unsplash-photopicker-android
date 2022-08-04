@@ -41,15 +41,15 @@ abstract class BaseViewModel : ViewModel() {
      */
     protected abstract fun getTag(): String
 
-    protected abstract inner class BaseObserver<Data> : Observer<Data> {
+    protected abstract inner class BaseObserver<Data : Any> : Observer<Data> {
         override fun onComplete() {
         }
 
-        override fun onSubscribe(d: Disposable?) {
+        override fun onSubscribe(d: Disposable) {
             mCompositeDisposable.add(d)
         }
 
-        override fun onNext(value: Data?) {
+        override fun onNext(value: Data) {
             if (UnsplashPhotoPicker.isLoggingEnabled()) {
                 Log.i(getTag(), value.toString())
             }
@@ -59,14 +59,14 @@ abstract class BaseViewModel : ViewModel() {
             onSuccess(value)
         }
 
-        override fun onError(e: Throwable?) {
-            Log.e(getTag(), e?.message, e)
+        override fun onError(e: Throwable) {
+            Log.e(getTag(), e.message, e)
             // hiding the loading
             mLoadingLiveData.postValue(false)
             // posting the error
             mErrorLiveData.postValue(false)
         }
 
-        abstract fun onSuccess(data: Data?)
+        abstract fun onSuccess(data: Data)
     }
 }
