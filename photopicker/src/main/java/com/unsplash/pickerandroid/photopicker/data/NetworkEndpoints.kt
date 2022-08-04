@@ -13,19 +13,19 @@ import retrofit2.http.Url
 interface NetworkEndpoints {
 
     @GET("collections/317099/photos")
-    fun loadPhotos(
+    suspend fun loadPhotos(
         @Query("client_id") clientId: String,
         @Query("page") page: Int,
         @Query("per_page") pageSize: Int
-    ): Observable<Response<List<UnsplashPhoto>>>
+    ): Response<List<UnsplashPhoto>>
 
     @GET("search/photos")
-    fun searchPhotos(
+    suspend fun searchPhotos(
         @Query("client_id") clientId: String,
         @Query("query") criteria: String,
         @Query("page") page: Int,
         @Query("per_page") pageSize: Int
-    ): Observable<Response<SearchResponse>>
+    ): Response<SearchResponse>
 
     @GET
     fun trackDownload(@Url url: String): Completable

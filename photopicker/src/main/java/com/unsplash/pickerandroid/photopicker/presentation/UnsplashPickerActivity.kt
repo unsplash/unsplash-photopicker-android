@@ -10,9 +10,11 @@ import android.text.TextUtils
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.unsplash.pickerandroid.photopicker.Injector
 import com.unsplash.pickerandroid.photopicker.R
@@ -26,11 +28,11 @@ import kotlinx.android.synthetic.main.activity_picker.*
  */
 class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
 
-    private lateinit var mLayoutManager: StaggeredGridLayoutManager
-
     private lateinit var mAdapter: UnsplashPhotoAdapter
 
-    private lateinit var mViewModel: UnsplashPickerViewModel
+    private val mViewModel: UnsplashPickerViewModel by viewModels {
+        Injector.createPickerViewModelFactory()
+    }
 
     private var mIsMultipleSelection = false
 
@@ -42,8 +44,7 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_picker)
         mIsMultipleSelection = intent.getBooleanExtra(EXTRA_IS_MULTIPLE, false)
-        // recycler view layout manager
-        mLayoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+
         // recycler view adapter
         mAdapter = UnsplashPhotoAdapter(this, mIsMultipleSelection)
         mAdapter.setOnImageSelectedListener(this)
@@ -58,8 +59,8 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
         // recycler view configuration
         unsplash_picker_recycler_view.setHasFixedSize(true)
         unsplash_picker_recycler_view.itemAnimator = null
-        unsplash_picker_recycler_view.layoutManager = mLayoutManager
         unsplash_picker_recycler_view.adapter = mAdapter
+
         // click listeners
         unsplash_picker_back_image_view.setOnClickListener { onBackPressed() }
         unsplash_picker_cancel_image_view.setOnClickListener { onBackPressed() }
@@ -70,11 +71,11 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
             updateUiFromState()
         }
         unsplash_picker_done_image_view.setOnClickListener { sendPhotosAsResult() }
+
         // get the view model and bind search edit text
-        mViewModel = ViewModelProvider(this, Injector.createPickerViewModelFactory())
-                .get(UnsplashPickerViewModel::class.java)
-        observeViewModel()
         mViewModel.bindSearch(unsplash_picker_edit_text)
+
+        observeViewModel()
     }
 
     /**
@@ -98,7 +99,8 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         // we want the recycler view to have 3 columns when in landscape and 2 in portrait
-        mLayoutManager.spanCount =
+        val layoutManager = unsplash_picker_recycler_view.layoutManager as GridLayoutManager
+        layoutManager.spanCount =
                 if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) 3
                 else 2
         mAdapter.notifyDataSetChanged()

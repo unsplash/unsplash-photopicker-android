@@ -14,13 +14,14 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.flow.Flow
 
 /**
  * Simple repository used as a proxy by the view models to fetch data.
  */
 class Repository constructor(private val networkEndpoints: NetworkEndpoints) {
 
-    fun loadPhotos(pageSize: Int): Observable<PagingData<UnsplashPhoto>> {
+    fun loadPhotos(pageSize: Int): Flow<PagingData<UnsplashPhoto>> {
         return Pager(
             config = PagingConfig(
                 pageSize = pageSize,
@@ -30,10 +31,10 @@ class Repository constructor(private val networkEndpoints: NetworkEndpoints) {
             pagingSourceFactory = {
                 LoadPhotoDataSource(networkEndpoints)
             }
-        ).observable
+        ).flow
     }
 
-    fun searchPhotos(criteria: String, pageSize: Int): Observable<PagingData<UnsplashPhoto>> {
+    fun searchPhotos(criteria: String, pageSize: Int): Flow<PagingData<UnsplashPhoto>> {
         return Pager(
             config = PagingConfig(
                 pageSize = pageSize,
@@ -43,7 +44,7 @@ class Repository constructor(private val networkEndpoints: NetworkEndpoints) {
             pagingSourceFactory = {
                 SearchPhotoDataSource(networkEndpoints, criteria)
             }
-        ).observable
+        ).flow
     }
 
     fun trackDownload(url: String?) {

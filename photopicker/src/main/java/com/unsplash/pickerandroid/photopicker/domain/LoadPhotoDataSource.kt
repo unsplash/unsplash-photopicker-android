@@ -1,5 +1,6 @@
 package com.unsplash.pickerandroid.photopicker.domain
 
+import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import androidx.paging.rxjava2.RxPagingSource
 import com.unsplash.pickerandroid.photopicker.UnsplashPhotoPicker
@@ -13,7 +14,7 @@ import io.reactivex.schedulers.Schedulers
  * This will load the photos and allow an infinite scroll on the picker screen.
  */
 class LoadPhotoDataSource(private val networkEndpoints: NetworkEndpoints) :
-    RxPagingSource<Int, UnsplashPhoto>() {
+    PagingSource<Int, UnsplashPhoto>() {
 
     override fun getRefreshKey(state: PagingState<Int, UnsplashPhoto>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
@@ -22,33 +23,29 @@ class LoadPhotoDataSource(private val networkEndpoints: NetworkEndpoints) :
         }
     }
 
-    override fun loadSingle(params: LoadParams<Int>): Single<LoadResult<Int, UnsplashPhoto>> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, UnsplashPhoto> {
         val pageIndex = params.key ?: 1
-        return networkEndpoints.loadPhotos(
-            UnsplashPhotoPicker.getAccessKey(),
-            pageIndex,
-            params.loadSize
-        ).map { response ->
-            if (response.isSuccessful) {
 
-                val items = response.body().orEmpty()
+        val response = networkEndpoints.loadPhotos(
+            UnsplashPhotoPicker.getAccessKey(), pageIndex, params.loadSize
+        )
 
-                val nextKey = if (items.isEmpty()) {
-                    null
-                } else {
-                    pageIndex + (params.loadSize / UnsplashPhotoPicker.getPageSize())
-                }
+        return if (response.isSuccessful) {
+            val items = response.body().orEmpty()
 
-                LoadResult.Page(
-                    response.body()!!,
-                    if (params.key == 1) null else params.key,
-                    nextKey
-                )
+            val nextKey = if (items.isEmpty()) {
+                null
             } else {
-                LoadResult.Error(
-                    Exception(response.message())
-                )
+                pageIndex + (params.loadSize / UnsplashPhotoPicker.getPageSize())
             }
-        }.singleOrError().subscribeOn(Schedulers.io())
+
+            LoadResult.Page(
+                response.body()!!, if (params.key == 1) null else params.key, nextKey
+            )
+        } else {
+            LoadResult.Error(
+                Exception(response.message())
+            )
+        }
     }
 }
