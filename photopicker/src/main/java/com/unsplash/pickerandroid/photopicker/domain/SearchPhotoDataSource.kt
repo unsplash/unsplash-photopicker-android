@@ -12,6 +12,8 @@ import com.unsplash.pickerandroid.photopicker.data.SearchResponse
 import io.reactivex.Observer
 import io.reactivex.Single
 import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
+import okhttp3.internal.notifyAll
 import retrofit2.Response
 
 /**
@@ -28,22 +30,33 @@ class SearchPhotoDataSource(
     private var lastPage: Int? = null
 
     override fun loadSingle(params: LoadParams<Int>): Single<LoadResult<Int, UnsplashPhoto>> {
+        val pageIndex = params.key ?: 1
+
         // updating the network state to loading
         networkState.postValue(NetworkState.LOADING)
+
         // api call for the first page
         return networkEndpoints.searchPhotos(
             UnsplashPhotoPicker.getAccessKey(),
             criteria,
-            1,
+            pageIndex,
             params.loadSize
         ).map { response ->
             if (response.isSuccessful) {
-                lastPage = response.headers()["x-total"]?.toInt()?.div(params.loadSize)
                 networkState.postValue(NetworkState.SUCCESS)
+
+                val items = response.body()?.results.orEmpty()
+
+                val nextKey = if (items.isEmpty()) {
+                    null
+                } else {
+                    pageIndex + (params.loadSize / UnsplashPhotoPicker.getPageSize())
+                }
+
                 LoadResult.Page(
-                    response.body()!!.results,
-                    null,
-                    lastPage
+                    items,
+                    if (pageIndex == 1) null else pageIndex,
+                    nextKey
                 )
             } else {
                 networkState.postValue(NetworkState.error(response.message()))
@@ -51,10 +64,13 @@ class SearchPhotoDataSource(
                     Exception(response.message())
                 )
             }
-        }.singleOrError()
+        }.singleOrError().subscribeOn(Schedulers.io())
     }
 
-    override fun getRefreshKey(state: PagingState<Int, UnsplashPhoto>): Int {
-        return state.config.pageSize
+    override fun getRefreshKey(state: PagingState<Int, UnsplashPhoto>): Int? {
+        return state.anchorPosition?.let { anchorPosition ->
+            state.closestPageToPosition(anchorPosition)?.prevKey?.plus(1)
+                ?: state.closestPageToPosition(anchorPosition)?.nextKey?.minus(1)
+        }
     }
 }

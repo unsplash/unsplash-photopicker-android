@@ -46,7 +46,6 @@ class UnsplashPickerViewModel constructor(private val repository: Repository) : 
                 if (TextUtils.isEmpty(text)) repository.loadPhotos(UnsplashPhotoPicker.getPageSize())
                 else repository.searchPhotos(text.toString(), UnsplashPhotoPicker.getPageSize())
             }
-            .subscribeOn(Schedulers.io())
             .subscribe(
                 object : BaseObserver<PagingData<UnsplashPhoto>>() {
                     override fun onSuccess(data: PagingData<UnsplashPhoto>) {

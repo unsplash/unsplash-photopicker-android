@@ -15,30 +15,40 @@ import io.reactivex.schedulers.Schedulers
 class LoadPhotoDataSource(private val networkEndpoints: NetworkEndpoints) :
     RxPagingSource<Int, UnsplashPhoto>() {
 
-    private var lastPage: Int? = null
-
     override fun getRefreshKey(state: PagingState<Int, UnsplashPhoto>): Int? {
-        return state.anchorPosition
+        return state.anchorPosition?.let { anchorPosition ->
+            state.closestPageToPosition(anchorPosition)?.prevKey?.plus(1)
+                ?: state.closestPageToPosition(anchorPosition)?.nextKey?.minus(1)
+        }
     }
 
     override fun loadSingle(params: LoadParams<Int>): Single<LoadResult<Int, UnsplashPhoto>> {
+        val pageIndex = params.key ?: 1
         return networkEndpoints.loadPhotos(
             UnsplashPhotoPicker.getAccessKey(),
-            params.key ?: 0,
+            pageIndex,
             params.loadSize
         ).map { response ->
             if (response.isSuccessful) {
-                val nextPage = if (params.key == lastPage) null else params.key!! + 1
+
+                val items = response.body().orEmpty()
+
+                val nextKey = if (items.isEmpty()) {
+                    null
+                } else {
+                    pageIndex + (params.loadSize / UnsplashPhotoPicker.getPageSize())
+                }
+
                 LoadResult.Page(
                     response.body()!!,
-                    params.key,
-                    nextPage
+                    if (params.key == 1) null else params.key,
+                    nextKey
                 )
             } else {
                 LoadResult.Error(
                     Exception(response.message())
                 )
             }
-        }.singleOrError()
+        }.singleOrError().subscribeOn(Schedulers.io())
     }
 }
