@@ -2,55 +2,70 @@ package com.unsplash.pickerandroid.example
 
 import android.app.Activity
 import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import androidx.activity.result.contract.ActivityResultContracts.*
+import com.unsplash.pickerandroid.example.databinding.ActivityMainBinding
 import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
 import com.unsplash.pickerandroid.photopicker.presentation.UnsplashPickerActivity
-import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var mAdapter: PhotoAdapter
 
+    private lateinit var binding : ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         // result adapter
         // recycler view configuration
-        main_recycler_view.setHasFixedSize(true)
-        main_recycler_view.itemAnimator = null
-        main_recycler_view.layoutManager = StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL)
-        mAdapter = PhotoAdapter(this)
-        main_recycler_view.adapter = mAdapter
+        binding.mainRecyclerView.apply {
+            setHasFixedSize(true)
+            itemAnimator = null
+        }
+
+        mAdapter = PhotoAdapter().also {
+            binding.mainRecyclerView.adapter = it
+        }
+
         // on the pick button click, we start the library picker activity
         // we are expecting a result from it so we start it for result
-        main_pick_button.setOnClickListener {
-            startActivityForResult(
+        binding.mainPickButton.setOnClickListener {
+            pickerLauncher.launch(
                 UnsplashPickerActivity.getStartingIntent(
                     this,
-                    !main_single_radio_button.isChecked
-                ), REQUEST_CODE
+                    !binding.mainSingleRadioButton.isChecked
+                )
             )
         }
     }
 
-    // here we are receiving the result from the picker activity
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE) {
+    private val pickerLauncher = registerForActivityResult(StartActivityForResult()) {
+        if (it.resultCode == RESULT_OK) {
             // getting the photos
-            val photos: ArrayList<UnsplashPhoto>? = data?.getParcelableArrayListExtra(UnsplashPickerActivity.EXTRA_PHOTOS)
+            val photos = getResult(it.data)
             // showing the preview
             mAdapter.setListOfPhotos(photos)
+
             // telling the user how many have been selected
-            Toast.makeText(this, "number of selected photos: " + photos?.size, Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "number of selected photos: " + photos?.size, Toast.LENGTH_SHORT)
+                .show()
         }
     }
 
-    companion object {
-        // dummy request code to identify the request
-        private const val REQUEST_CODE = 123
+    private fun getResult(data: Intent?): List<UnsplashPhoto>? {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            data?.getParcelableArrayListExtra(
+                UnsplashPickerActivity.EXTRA_PHOTOS,
+                UnsplashPhoto::class.java
+            )
+        } else {
+            data?.getParcelableArrayListExtra(UnsplashPickerActivity.EXTRA_PHOTOS)
+        }
     }
 }

@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.view.isInvisible
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -45,21 +46,24 @@ class UnsplashPhotoAdapter(private val isMultipleSelection: Boolean) :
             holder.itemView.setBackgroundColor(Color.parseColor(photo.color))
             Picasso.get().load(photo.urls.small)
                 .into(holder.imageView)
+
             // photograph name
             holder.txtView.text = photo.user.name
+
             // selected controls visibility
-            holder.checkedImageView.visibility =
-                if (mSelectedIndexes.contains(holder.adapterPosition)) View.VISIBLE else View.INVISIBLE
-            holder.overlay.visibility =
-                if (mSelectedIndexes.contains(holder.adapterPosition)) View.VISIBLE else View.INVISIBLE
+            holder.checkedImageView.isInvisible = holder.bindingAdapterPosition !in mSelectedIndexes
+            holder.overlay.isInvisible = holder.bindingAdapterPosition !in mSelectedIndexes
+
             // click listener
             holder.itemView.setOnClickListener {
                 // selected index(es) management
-                if (mSelectedIndexes.contains(holder.adapterPosition)) {
-                    mSelectedIndexes.remove(holder.adapterPosition)
+                if (holder.bindingAdapterPosition in mSelectedIndexes) {
+                    mSelectedIndexes.remove(holder.bindingAdapterPosition)
                 } else {
-                    if (!isMultipleSelection) mSelectedIndexes.clear()
-                    mSelectedIndexes.add(holder.adapterPosition)
+                    if (!isMultipleSelection) {
+                        mSelectedIndexes.clear()
+                    }
+                    mSelectedIndexes.add(holder.bindingAdapterPosition)
                 }
                 if (isMultipleSelection) {
                     notifyDataSetChanged()
@@ -115,7 +119,7 @@ class UnsplashPhotoAdapter(private val isMultipleSelection: Boolean) :
     /**
      * UnsplashPhoto view holder.
      */
-    class PhotoViewHolder(val binding: ItemUnsplashPhotoBinding) :
+    class PhotoViewHolder(binding: ItemUnsplashPhotoBinding) :
         RecyclerView.ViewHolder(binding.root) {
         val imageView: AspectRatioImageView = binding.itemUnsplashPhotoImageView
         val txtView: TextView = binding.itemUnsplashPhotoTextView
