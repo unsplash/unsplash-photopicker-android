@@ -1,6 +1,6 @@
 # Unsplash Photo Picker for Android
 
-[![License](https://img.shields.io/github/license/sekthdroid/unsplash-photopicker-android.svg?style=flat-square)](https://github.com/Sekthdroid/unsplash-photopicker-android)
+[![License](https://img.shields.io/github/license/sekthdroid/unsplash-photopicker-android.svg?style=flat-square)](LICENSE)
 ![JitPack](https://img.shields.io/jitpack/v/github/sekthdroid/unsplash-photopicker-android)
 
 UnsplashPhotoPicker is an Android UI component that allows you to quickly search the Unsplash
@@ -160,7 +160,7 @@ for more details.
 
 ## License
 
-This project is [licensed](https://github.com/SekthDroid/unsplash-photopicker-android/blob/master/LICENSE) under MIT. The original project was made by [Unsplash](https://github.com/SekthDroid/unsplash-photopicker-android/blob/master/LICENSE_ORIGINAL) under MIT.
+This project is [licensed](LICENSE) under MIT. The original project was made by [Unsplash](LICENSE_ORIGINAL) under MIT.
 
 MIT LICENSE
 
