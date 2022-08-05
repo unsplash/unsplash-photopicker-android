@@ -2,6 +2,7 @@ package com.unsplash.pickerandroid.photopicker.data
 
 import io.reactivex.Completable
 import io.reactivex.Observable
+import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -28,7 +29,7 @@ interface NetworkEndpoints {
     ): Response<SearchResponse>
 
     @GET
-    fun trackDownload(@Url url: String): Completable
+    suspend fun trackDownload(@Url url: String): Response<ResponseBody>
 
     companion object {
         const val BASE_URL = "https://api.unsplash.com/"

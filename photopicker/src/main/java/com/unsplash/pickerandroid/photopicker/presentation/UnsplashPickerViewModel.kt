@@ -46,13 +46,18 @@ class UnsplashPickerViewModel constructor(private val repository: Repository) : 
             .conflate()
             .debounce(500)
             .flatMapLatest { text ->
+                mLoadingLiveData.postValue(true)
                 if (TextUtils.isEmpty(text)) {
                     repository.loadPhotos(UnsplashPhotoPicker.getPageSize())
                 } else {
                     repository.searchPhotos(text, UnsplashPhotoPicker.getPageSize())
                 }
             }
+            .catch {
+                mErrorLiveData.postValue(true)
+            }
             .onEach {
+                mLoadingLiveData.postValue(false)
                 mPhotosLiveData.postValue(it)
             }
             .launchIn(viewModelScope)

@@ -14,12 +14,14 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 
 /**
  * Simple repository used as a proxy by the view models to fetch data.
  */
 class Repository constructor(private val networkEndpoints: NetworkEndpoints) {
+    private val coroutineScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
     fun loadPhotos(pageSize: Int): Flow<PagingData<UnsplashPhoto>> {
         return Pager(
@@ -47,18 +49,19 @@ class Repository constructor(private val networkEndpoints: NetworkEndpoints) {
         ).flow
     }
 
-    fun trackDownload(url: String?) {
-        if (url != null) {
-            val uriBuilder = Uri.parse(url).buildUpon()
-            uriBuilder.appendQueryParameter("client_id", UnsplashPhotoPicker.getAccessKey())
-            val downloadUrl = uriBuilder.build().toString()
-            networkEndpoints.trackDownload(downloadUrl)
-                .observeOn(Schedulers.io())
-                .subscribeOn(Schedulers.io())
-                .doOnError { e ->
-                    Log.e(Repository::class.java.simpleName, e?.message, e)
+    fun trackDownload(vararg url: String?) {
+        coroutineScope.launch {
+            url.filterNotNull()
+                .map {
+                    Uri.parse(it).buildUpon()
+                        .appendQueryParameter("client_id", UnsplashPhotoPicker.getAccessKey())
+                        .build()
+                        .toString()
                 }
-                .subscribe()
+                .forEach {
+                    networkEndpoints.trackDownload(it)
+                    println("Tracked download of $it")
+                }
         }
     }
 }
