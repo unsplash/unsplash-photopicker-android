@@ -60,7 +60,6 @@ class Repository constructor(private val networkEndpoints: NetworkEndpoints) {
                 }
                 .forEach {
                     networkEndpoints.trackDownload(it)
-                    println("Tracked download of $it")
                 }
         }
     }
