@@ -1,7 +1,7 @@
 # Unsplash Photo Picker for Android
 
 [![License](https://img.shields.io/github/license/sekthdroid/unsplash-photopicker-android.svg?style=flat-square)](https://github.com/Sekthdroid/unsplash-photopicker-android)
-![JitPack](https://img.shields.io/jitpack/v/github/sekthdroid/unsplash-photopicker-android)
+![JitPack](https://img.shields.io/jitpack/v/github/SekthDroid/unsplash-photopicker-android)
 
 UnsplashPhotoPicker is an Android UI component that allows you to quickly search the Unsplash
 library for free high-quality photos with just a few lines of code.
