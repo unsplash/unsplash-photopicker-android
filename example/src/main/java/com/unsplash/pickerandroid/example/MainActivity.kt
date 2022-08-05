@@ -1,12 +1,11 @@
 package com.unsplash.pickerandroid.example
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts.*
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
+import androidx.appcompat.app.AppCompatActivity
 import com.unsplash.pickerandroid.example.databinding.ActivityMainBinding
 import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
 import com.unsplash.pickerandroid.photopicker.presentation.UnsplashPickerActivity

@@ -1,7 +1,5 @@
 package com.unsplash.pickerandroid.photopicker.data
 
-import io.reactivex.Completable
-import io.reactivex.Observable
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.GET

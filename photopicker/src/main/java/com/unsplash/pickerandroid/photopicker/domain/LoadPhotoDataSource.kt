@@ -2,12 +2,9 @@ package com.unsplash.pickerandroid.photopicker.domain
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import androidx.paging.rxjava2.RxPagingSource
 import com.unsplash.pickerandroid.photopicker.UnsplashPhotoPicker
 import com.unsplash.pickerandroid.photopicker.data.NetworkEndpoints
 import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
-import io.reactivex.Single
-import io.reactivex.schedulers.Schedulers
 
 /**
  * Android paging library data source.

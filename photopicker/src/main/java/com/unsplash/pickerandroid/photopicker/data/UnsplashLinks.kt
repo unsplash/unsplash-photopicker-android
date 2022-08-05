@@ -1,7 +1,7 @@
 package com.unsplash.pickerandroid.photopicker.data
 
 import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class UnsplashLinks(
