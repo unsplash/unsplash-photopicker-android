@@ -10,7 +10,6 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
@@ -47,7 +46,7 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
         mIsMultipleSelection = intent.getBooleanExtra(EXTRA_IS_MULTIPLE, false)
 
         // recycler view adapter
-        mAdapter = UnsplashPhotoAdapter(this, mIsMultipleSelection)
+        mAdapter = UnsplashPhotoAdapter(mIsMultipleSelection)
         mAdapter.setOnImageSelectedListener(this)
         mAdapter.addLoadStateListener { loadState->
             if (loadState.append.endOfPaginationReached) {

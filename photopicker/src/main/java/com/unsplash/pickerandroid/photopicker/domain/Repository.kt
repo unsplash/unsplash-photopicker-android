@@ -1,21 +1,17 @@
 package com.unsplash.pickerandroid.photopicker.domain
 
 import android.net.Uri
-import android.util.Log
-import androidx.paging.*
-import androidx.paging.rxjava2.RxPagingSource
-import androidx.paging.rxjava2.flowable
-import androidx.paging.rxjava2.observable
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.unsplash.pickerandroid.photopicker.UnsplashPhotoPicker
 import com.unsplash.pickerandroid.photopicker.data.NetworkEndpoints
 import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
-import io.reactivex.CompletableObserver
-import io.reactivex.Observable
-import io.reactivex.Single
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 
 /**
  * Simple repository used as a proxy by the view models to fetch data.

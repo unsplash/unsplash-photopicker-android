@@ -2,25 +2,14 @@ package com.unsplash.pickerandroid.photopicker.presentation
 
 import android.text.TextUtils
 import android.widget.EditText
-import androidx.core.widget.doAfterTextChanged
-import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.viewModelScope
-import androidx.paging.PagedList
 import androidx.paging.PagingData
-import com.jakewharton.rxbinding2.widget.RxTextView
 import com.unsplash.pickerandroid.photopicker.UnsplashPhotoPicker
 import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
 import com.unsplash.pickerandroid.photopicker.domain.Repository
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
-import java.util.concurrent.TimeUnit
 
 /**
  * View model for the picker screen.
