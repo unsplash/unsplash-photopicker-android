@@ -198,10 +198,10 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
                 if (!TextUtils.isEmpty(binding.unsplashPickerEditText.text)) {
                     binding.unsplashPickerEditText.setText("")
                 }
-                binding.unsplashPickerEditText.isInvisible = false
+                binding.unsplashPickerEditText.isVisible = false
 
                 // right clear button on top of edit text gone
-                binding.unsplashPickerClearImageView.isInvisible = false
+                binding.unsplashPickerClearImageView.isVisible = false
 
                 // keyboard down
                 binding.unsplashPickerEditText.closeKeyboard(this)
@@ -215,10 +215,10 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
             }
             UnsplashPickerState.SEARCHING -> {
                 // back, cancel, done or search buttons gone
-                binding.unsplashPickerBackImageView.isInvisible = false
-                binding.unsplashPickerCancelImageView.isInvisible = false
-                binding.unsplashPickerDoneImageView.isInvisible = false
-                binding.unsplashPickerSearchImageView.isInvisible = false
+                binding.unsplashPickerBackImageView.isVisible = false
+                binding.unsplashPickerCancelImageView.isVisible = false
+                binding.unsplashPickerDoneImageView.isVisible = false
+                binding.unsplashPickerSearchImageView.isVisible = false
 
                 // edit text visible and focused
                 binding.unsplashPickerEditText.isVisible = true
