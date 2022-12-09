@@ -1,28 +1,36 @@
 apply plugin: 'maven-publish'
 
-version '1.0.0' // your library version
-group 'com.unsplash.pickerandroid' // whatever group name you'd like
+version '1.0.2' // your library version
+group 'com.github.unsplash' // whatever group name you'd like
 
-publishing {
-    publications {
-        Production(MavenPublication) {
-            artifact("$buildDir/outputs/aar/photopicker-release.aar") // replace with your library name
-            groupId this.group
-            artifactId 'photopicker' // replace with your library artifact id
-            version this.version
+afterEvaluate {
+    task androidSourcesJar(type: Jar) {
+        archiveClassifier.set('sources')
+        from android.sourceSets.main.java.srcDirs
+    }
 
-            pom.withXml {
-                def dependenciesNode = asNode().appendNode('dependencies')
+    publishing {
+        publications {
+            Production(MavenPublication) {
+                artifact bundleReleaseAar
+                artifact androidSourcesJar
+                groupId this.group
+                artifactId 'unsplash-photopicker-android' // replace with your library artifact id
+                version this.version
 
-                // Iterate over the implementation dependencies (we don't want the test ones),
-                // adding a <dependency> node for each
-                configurations.implementation.allDependencies.each {
-                    // Ensure dependencies such as fileTree are not included in the pom.
-                    if (it.name != 'unspecified') {
-                        def dependencyNode = dependenciesNode.appendNode('dependency')
-                        dependencyNode.appendNode('groupId', it.group)
-                        dependencyNode.appendNode('artifactId', it.name)
-                        dependencyNode.appendNode('version', it.version)
+                pom.withXml {
+                    def dependenciesNode = asNode().appendNode('dependencies')
+
+                    // Iterate over the implementation dependencies (we don't want the test ones),
+                    // adding a <dependency> node for each
+                    configurations.implementation.allDependencies.each {
+                        // Ensure dependencies such as fileTree are not included in the pom.
+                        if (it.name != 'unspecified') {
+                            def dependencyNode = dependenciesNode.appendNode('dependency')
+                            dependencyNode.appendNode('groupId', it.group)
+                            dependencyNode.appendNode('artifactId', it.name)
+                            dependencyNode.appendNode('version', it.version)
+                        }
                     }
                 }
             }
