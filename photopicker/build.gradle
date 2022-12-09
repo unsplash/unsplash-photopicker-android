@@ -38,6 +38,9 @@ dependencies {
     implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"
     implementation "com.squareup.retrofit2:converter-moshi:$retrofitVersion"
 
+    // json
+    implementation "com.squareup.moshi:moshi-kotlin:1.14.0"
+
     // paging
     implementation 'androidx.paging:paging-runtime:2.1.0'
     implementation 'androidx.paging:paging-rxjava2:2.1.0'
@@ -45,7 +48,7 @@ dependencies {
     // misc
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'com.jakewharton.rxbinding2:rxbinding:2.1.1'
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.11.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.10.0'
 
     // lifecycle
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
