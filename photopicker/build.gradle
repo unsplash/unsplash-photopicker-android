@@ -33,9 +33,10 @@ dependencies {
     implementation 'com.google.android.material:material:1.0.0'
 
     // retrofit and okhttp
-    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
-    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.4.0'
-    implementation 'com.squareup.retrofit2:converter-moshi:2.4.0'
+    def retrofitVersion = "2.9.0"
+    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"
+    implementation "com.squareup.retrofit2:converter-moshi:$retrofitVersion"
 
     // paging
     implementation 'androidx.paging:paging-runtime:2.1.0'
