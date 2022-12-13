@@ -1,6 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 28
@@ -8,7 +9,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 2
-        versionName "1.0.1"
+        versionName "1.0.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -32,9 +33,13 @@ dependencies {
     implementation 'com.google.android.material:material:1.0.0'
 
     // retrofit and okhttp
-    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
-    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.4.0'
-    implementation 'com.squareup.retrofit2:converter-moshi:2.4.0'
+    def retrofitVersion = "2.9.0"
+    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"
+    implementation "com.squareup.retrofit2:converter-moshi:$retrofitVersion"
+
+    // json
+    implementation "com.squareup.moshi:moshi-kotlin:1.14.0"
 
     // paging
     implementation 'androidx.paging:paging-runtime:2.1.0'
@@ -43,7 +48,7 @@ dependencies {
     // misc
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'com.jakewharton.rxbinding2:rxbinding:2.1.1'
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.11.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.10.0'
 
     // lifecycle
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'

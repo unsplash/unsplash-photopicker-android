@@ -1,5 +1,7 @@
 package com.unsplash.pickerandroid.photopicker
 
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.unsplash.pickerandroid.photopicker.data.NetworkEndpoints
 import com.unsplash.pickerandroid.photopicker.domain.Repository
 import com.unsplash.pickerandroid.photopicker.presentation.UnsplashPickerViewModelFactory
@@ -49,9 +51,12 @@ object Injector {
     }
 
     private fun createRetrofitBuilder(): Retrofit {
+        val moshi = Moshi.Builder()
+            .addLast(KotlinJsonAdapterFactory())
+            .build()
         return Retrofit.Builder()
             .baseUrl(NetworkEndpoints.BASE_URL)
-            .addConverterFactory(MoshiConverterFactory.create())
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .client(createHttpClient())
             .build()

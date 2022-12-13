@@ -13,7 +13,7 @@ data class UnsplashUser(
     val location: String?,
     val total_likes: Int,
     val total_photos: Int,
-    val total_collection: Int,
+    val total_collection: Int?,
     val profile_image: UnsplashUrls,
     val links: UnsplashLinks
 ) : Parcelable
