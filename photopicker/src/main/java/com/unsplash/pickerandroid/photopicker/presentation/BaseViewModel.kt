@@ -20,9 +20,4 @@ abstract class BaseViewModel : ViewModel() {
     // the loading live data triggered every time the loading state changes
     protected val mLoadingLiveData = MutableLiveData<Boolean>()
     val loadingLiveData: LiveData<Boolean> get() = mLoadingLiveData
-
-    /**
-     * Getting the tag for the logs.
-     */
-    protected abstract fun getTag(): String
 }

@@ -41,10 +41,6 @@ class UnsplashPickerViewModel constructor(private val repository: Repository) : 
         }
     }
 
-    override fun getTag(): String {
-        return UnsplashPickerViewModel::class.java.simpleName
-    }
-
     /**
      * To abide by the API guidelines,
      * you need to trigger a GET request to this endpoint every time your application performs a download of a photo
