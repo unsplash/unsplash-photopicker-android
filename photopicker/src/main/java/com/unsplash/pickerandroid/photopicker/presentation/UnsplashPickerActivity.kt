@@ -13,6 +13,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
+import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.GridLayoutManager
 import com.unsplash.pickerandroid.photopicker.Injector
 import com.unsplash.pickerandroid.photopicker.R
@@ -105,8 +106,9 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
         }
         binding.unsplashPickerDoneImageView.setOnClickListener { sendPhotosAsResult() }
 
-        // get the view model and bind search edit text
-        mViewModel.bindSearch(binding.unsplashPickerEditText)
+        binding.unsplashPickerEditText.doOnTextChanged { text, _, _, _ ->
+            mViewModel.onQueryChanged(text.toString())
+        }
 
         observeViewModel()
     }

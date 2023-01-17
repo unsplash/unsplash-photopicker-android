@@ -1,7 +1,6 @@
 package com.unsplash.pickerandroid.photopicker.presentation
 
 import android.text.TextUtils
-import android.widget.EditText
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -22,30 +21,28 @@ class UnsplashPickerViewModel constructor(private val repository: Repository) : 
     private val mPhotosLiveData = MutableLiveData<PagingData<UnsplashPhoto>>()
     val photosLiveData: LiveData<PagingData<UnsplashPhoto>> get() = mPhotosLiveData
 
-    override fun getTag(): String {
-        return UnsplashPickerViewModel::class.java.simpleName
+    private val onQueryChangeFlow = MutableStateFlow("")
+
+    init {
+        viewModelScope.launch {
+            onQueryChangeFlow
+                .debounce(500)
+                .flatMapLatest { text ->
+                    if (TextUtils.isEmpty(text)) {
+                        repository.loadPhotos(UnsplashPhotoPicker.getPageSize())
+                    } else {
+                        repository.searchPhotos(text, UnsplashPhotoPicker.getPageSize())
+                    }
+                }
+                .onEach {
+                    mPhotosLiveData.postValue(it)
+                }
+                .collect()
+        }
     }
 
-    /**
-     * Binds the edit text using rx binding to listen to text change.
-     *
-     * @param editText the edit text to listen to
-     */
-    fun bindSearch(editText: EditText) {
-        editText.textChangeFlow()
-            .conflate()
-            .debounce(500)
-            .flatMapLatest { text ->
-                if (TextUtils.isEmpty(text)) {
-                    repository.loadPhotos(UnsplashPhotoPicker.getPageSize())
-                } else {
-                    repository.searchPhotos(text, UnsplashPhotoPicker.getPageSize())
-                }
-            }
-            .onEach {
-                mPhotosLiveData.postValue(it)
-            }
-            .launchIn(viewModelScope)
+    override fun getTag(): String {
+        return UnsplashPickerViewModel::class.java.simpleName
     }
 
     /**
@@ -59,6 +56,12 @@ class UnsplashPickerViewModel constructor(private val repository: Repository) : 
             photos.onEach { photos ->
                 repository.trackDownload(photos.links.download_location)
             }
+        }
+    }
+
+    fun onQueryChanged(query: String) {
+        viewModelScope.launch {
+            onQueryChangeFlow.emit(query)
         }
     }
 }
