@@ -1,17 +1,25 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 33
     defaultConfig {
         applicationId "com.unsplash.pickerandroid.example"
         minSdkVersion 21
-        targetSdkVersion 32
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        // Create unsplashAccessKey and unsplashSecretKey in your gradle.properties
+        buildConfigField "String", "UNSPLASH_ACCESS_KEY", "$unsplashAccessKey"
+        buildConfigField "String", "UNSPLASH_SECRET_KEY", "$unsplashSecretKey"
     }
+
+    buildFeatures {
+        viewBinding true
+    }
+
     buildTypes {
         release {
             minifyEnabled false

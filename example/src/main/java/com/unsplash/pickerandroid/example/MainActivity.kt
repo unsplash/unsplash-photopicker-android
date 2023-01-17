@@ -6,31 +6,36 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.unsplash.pickerandroid.example.databinding.ActivityMainBinding
 import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
 import com.unsplash.pickerandroid.photopicker.presentation.UnsplashPickerActivity
-import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var mAdapter: PhotoAdapter
+    private val binding: ActivityMainBinding by lazy(LazyThreadSafetyMode.NONE) {
+        ActivityMainBinding.inflate(layoutInflater)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(binding.root)
         // result adapter
         // recycler view configuration
-        main_recycler_view.setHasFixedSize(true)
-        main_recycler_view.itemAnimator = null
-        main_recycler_view.layoutManager = StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL)
-        mAdapter = PhotoAdapter(this)
-        main_recycler_view.adapter = mAdapter
+        binding.mainRecyclerView.apply {
+            setHasFixedSize(true)
+            itemAnimator = null
+            layoutManager = StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL)
+            mAdapter = PhotoAdapter()
+            adapter = mAdapter
+        }
         // on the pick button click, we start the library picker activity
         // we are expecting a result from it so we start it for result
-        main_pick_button.setOnClickListener {
+        binding.mainPickButton.setOnClickListener {
             startActivityForResult(
                 UnsplashPickerActivity.getStartingIntent(
                     this,
-                    !main_single_radio_button.isChecked
+                    !binding.mainSingleRadioButton.isChecked
                 ), REQUEST_CODE
             )
         }
