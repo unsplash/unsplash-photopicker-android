@@ -3,13 +3,16 @@ package com.unsplash.pickerandroid.photopicker.presentation
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import com.squareup.picasso.Picasso
 import com.unsplash.pickerandroid.photopicker.databinding.ActivityImageShowBinding
 
 class PhotoShowActivity : AppCompatActivity() {
 
-    private val binding = ActivityImageShowBinding.inflate(layoutInflater)
+    private val binding by lazy(LazyThreadSafetyMode.NONE) {
+        ActivityImageShowBinding.inflate(layoutInflater)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,10 +24,10 @@ class PhotoShowActivity : AppCompatActivity() {
 
         // click listener
         binding.imageShowLayout.setOnClickListener { supportFinishAfterTransition() }
-    }
-
-    override fun onBackPressed() {
-        supportFinishAfterTransition()
+        
+        onBackPressedDispatcher.addCallback {
+            supportFinishAfterTransition()
+        }
     }
 
     companion object {

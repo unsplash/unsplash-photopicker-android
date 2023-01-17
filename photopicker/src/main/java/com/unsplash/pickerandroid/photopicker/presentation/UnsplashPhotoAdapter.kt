@@ -1,18 +1,15 @@
 package com.unsplash.pickerandroid.photopicker.presentation
 
-import android.content.Context
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.paging.PagedListAdapter
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
-import com.unsplash.pickerandroid.photopicker.R
 import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
 import com.unsplash.pickerandroid.photopicker.databinding.ItemUnsplashPhotoBinding
 
@@ -21,10 +18,8 @@ import com.unsplash.pickerandroid.photopicker.databinding.ItemUnsplashPhotoBindi
  * This is using the Android paging library to display an infinite list of photos.
  * This deals with either a single or multiple selection list.
  */
-class UnsplashPhotoAdapter constructor(context: Context, private val isMultipleSelection: Boolean) :
+class UnsplashPhotoAdapter(private val isMultipleSelection: Boolean) :
     PagingDataAdapter<UnsplashPhoto, UnsplashPhotoAdapter.PhotoViewHolder>(COMPARATOR) {
-
-    private val mLayoutInflater: LayoutInflater = LayoutInflater.from(context)
 
     private val mSelectedIndexes = ArrayList<Int>()
 
@@ -122,6 +117,7 @@ class UnsplashPhotoAdapter constructor(context: Context, private val isMultipleS
      */
     class PhotoViewHolder(val binding: ItemUnsplashPhotoBinding) :
         RecyclerView.ViewHolder(binding.root) {
+
         val imageView: AspectRatioImageView = binding.itemUnsplashPhotoImageView
         val txtView: TextView = binding.itemUnsplashPhotoTextView
         val checkedImageView: ImageView = binding.itemUnsplashPhotoCheckedImageView

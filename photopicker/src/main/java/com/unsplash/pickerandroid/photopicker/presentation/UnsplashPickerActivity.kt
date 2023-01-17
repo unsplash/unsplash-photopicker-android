@@ -8,11 +8,11 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import com.unsplash.pickerandroid.photopicker.Injector
 import com.unsplash.pickerandroid.photopicker.R
@@ -38,7 +38,7 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
 
     private var mPreviousState = UnsplashPickerState.IDLE
 
-    private lateinit var binding : ActivityPickerBinding
+    private lateinit var binding: ActivityPickerBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,9 +47,9 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
         mIsMultipleSelection = intent.getBooleanExtra(EXTRA_IS_MULTIPLE, false)
 
         // recycler view adapter
-        mAdapter = UnsplashPhotoAdapter(this, mIsMultipleSelection)
+        mAdapter = UnsplashPhotoAdapter(mIsMultipleSelection)
         mAdapter.setOnImageSelectedListener(this)
-        mAdapter.addLoadStateListener { loadState->
+        mAdapter.addLoadStateListener { loadState ->
             if (loadState.append.endOfPaginationReached) {
                 binding.unsplashPickerNoResultTextView.isVisible = mAdapter.itemCount < 1
             }
@@ -62,10 +62,42 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
             adapter = mAdapter
         }
 
+        onBackPressedDispatcher.addCallback {
+            when (mCurrentState) {
+                UnsplashPickerState.IDLE -> {
+                    finish()
+                }
+                UnsplashPickerState.SEARCHING -> {
+                    // updating states
+                    mCurrentState = UnsplashPickerState.IDLE
+                    mPreviousState = UnsplashPickerState.SEARCHING
+                    // updating ui
+                    updateUiFromState()
+                }
+                UnsplashPickerState.PHOTO_SELECTED -> {
+                    // updating states
+                    mCurrentState = if (mPreviousState == UnsplashPickerState.SEARCHING) {
+                        UnsplashPickerState.SEARCHING
+                    } else {
+                        UnsplashPickerState.IDLE
+                    }
+                    mPreviousState = UnsplashPickerState.PHOTO_SELECTED
+                    // updating ui
+                    updateUiFromState()
+                }
+            }
+        }
+
         // click listeners
-        binding.unsplashPickerBackImageView.setOnClickListener { onBackPressed() }
-        binding.unsplashPickerCancelImageView.setOnClickListener { onBackPressed() }
-        binding.unsplashPickerClearImageView.setOnClickListener { onBackPressed() }
+        binding.unsplashPickerBackImageView.setOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
+        binding.unsplashPickerCancelImageView.setOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
+        binding.unsplashPickerClearImageView.setOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
         binding.unsplashPickerSearchImageView.setOnClickListener {
             // updating state
             mCurrentState = UnsplashPickerState.SEARCHING
@@ -83,28 +115,29 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
      * Observes the live data in the view model.
      */
     private fun observeViewModel() {
-        mViewModel.errorLiveData.observe(this, Observer {
+        mViewModel.errorLiveData.observe(this) {
             Toast.makeText(this, "error", Toast.LENGTH_SHORT).show()
-        })
-        mViewModel.messageLiveData.observe(this, Observer {
+        }
+        mViewModel.messageLiveData.observe(this) {
             Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
-        })
-        mViewModel.loadingLiveData.observe(this, Observer {
+        }
+        mViewModel.loadingLiveData.observe(this) {
             binding.unsplashPickerProgressBarLayout.isVisible = it != null && it
-        })
-        mViewModel.photosLiveData.observe(this, Observer {
+        }
+        mViewModel.photosLiveData.observe(this) {
             mAdapter.submitData(lifecycle, it)
-        })
+        }
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         // we want the recycler view to have 3 columns when in landscape and 2 in portrait
         val layoutManager = binding.unsplashPickerRecyclerView.layoutManager as GridLayoutManager
-        layoutManager.spanCount =
-                if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) 3
-                else 2
-        mAdapter.notifyDataSetChanged()
+        layoutManager.spanCount = if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE)
+            3
+        else
+            2
+        mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount)
     }
 
     override fun onPhotoSelected(nbOfSelectedPhotos: Int) {
@@ -125,7 +158,7 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
                 }
                 updateUiFromState()
             } else { // no photo selected means un-selection
-                onBackPressed()
+                onBackPressedDispatcher.onBackPressed()
             }
         }
         // if single selection send selected photo as a result
@@ -151,32 +184,6 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
 
     override fun onPhotoLongPress(imageView: ImageView, url: String) {
         startActivity(PhotoShowActivity.getStartingIntent(this, url))
-    }
-
-    override fun onBackPressed() {
-        when (mCurrentState) {
-            UnsplashPickerState.IDLE -> {
-                super.onBackPressed()
-            }
-            UnsplashPickerState.SEARCHING -> {
-                // updating states
-                mCurrentState = UnsplashPickerState.IDLE
-                mPreviousState = UnsplashPickerState.SEARCHING
-                // updating ui
-                updateUiFromState()
-            }
-            UnsplashPickerState.PHOTO_SELECTED -> {
-                // updating states
-                mCurrentState = if (mPreviousState == UnsplashPickerState.SEARCHING) {
-                    UnsplashPickerState.SEARCHING
-                } else {
-                    UnsplashPickerState.IDLE
-                }
-                mPreviousState = UnsplashPickerState.PHOTO_SELECTED
-                // updating ui
-                updateUiFromState()
-            }
-        }
     }
 
     /*
