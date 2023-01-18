@@ -23,25 +23,31 @@ class LoadPhotoDataSource(private val networkEndpoints: NetworkEndpoints) :
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, UnsplashPhoto> {
         val pageIndex = params.key ?: 1
 
-        val response = networkEndpoints.loadPhotos(
-            UnsplashPhotoPicker.getAccessKey(), pageIndex, params.loadSize
-        )
+        return try {
+            val response = networkEndpoints.loadPhotos(
+                UnsplashPhotoPicker.getAccessKey(), pageIndex, params.loadSize
+            )
+            if (response.isSuccessful) {
+                val items = response.body().orEmpty()
 
-        return if (response.isSuccessful) {
-            val items = response.body().orEmpty()
+                val nextKey = if (items.isEmpty()) {
+                    null
+                } else {
+                    pageIndex + (params.loadSize / UnsplashPhotoPicker.getPageSize())
+                }
 
-            val nextKey = if (items.isEmpty()) {
-                null
+                LoadResult.Page(
+                    response.body()!!, if (params.key == 1) null else params.key, nextKey
+                )
             } else {
-                pageIndex + (params.loadSize / UnsplashPhotoPicker.getPageSize())
+                LoadResult.Error(
+                    Exception(response.message())
+                )
             }
 
-            LoadResult.Page(
-                response.body()!!, if (params.key == 1) null else params.key, nextKey
-            )
-        } else {
+        } catch (ex: Exception) {
             LoadResult.Error(
-                Exception(response.message())
+                Exception(ex.message)
             )
         }
     }
