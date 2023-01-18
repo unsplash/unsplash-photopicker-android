@@ -12,8 +12,8 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         // Create unsplashAccessKey and unsplashSecretKey in your gradle.properties
-        buildConfigField "String", "UNSPLASH_ACCESS_KEY", "$unsplashAccessKey"
-        buildConfigField "String", "UNSPLASH_SECRET_KEY", "$unsplashSecretKey"
+        buildConfigField "String", "UNSPLASH_ACCESS_KEY", '"your-access-key"'
+        buildConfigField "String", "UNSPLASH_SECRET_KEY", '"your-secret-key"'
     }
 
     buildFeatures {
