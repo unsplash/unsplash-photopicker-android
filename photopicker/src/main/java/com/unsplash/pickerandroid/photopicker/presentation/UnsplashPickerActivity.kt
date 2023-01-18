@@ -11,7 +11,6 @@ import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.GridLayoutManager
@@ -68,6 +67,7 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
                 UnsplashPickerState.IDLE -> {
                     finish()
                 }
+
                 UnsplashPickerState.SEARCHING -> {
                     // updating states
                     mCurrentState = UnsplashPickerState.IDLE
@@ -75,6 +75,7 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
                     // updating ui
                     updateUiFromState()
                 }
+
                 UnsplashPickerState.PHOTO_SELECTED -> {
                     // updating states
                     mCurrentState = if (mPreviousState == UnsplashPickerState.SEARCHING) {
@@ -174,12 +175,12 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
      */
     private fun sendPhotosAsResult() {
         // get the selected photos
-        val photos: ArrayList<UnsplashPhoto> = mAdapter.getImages()
+        val photos: List<UnsplashPhoto> = mAdapter.getImages()
         // track the downloads
         mViewModel.trackDownloads(photos)
         // send them back to the calling activity
         val data = Intent()
-        data.putExtra(EXTRA_PHOTOS, photos)
+        data.putExtra(EXTRA_PHOTOS, ArrayList(photos))
         setResult(Activity.RESULT_OK, data)
         finish()
     }
@@ -210,7 +211,7 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
                 binding.unsplashPickerEditText.isVisible = false
 
                 // right clear button on top of edit text gone
-                binding.unsplashPickerClearImageView.isInvisible = false
+                binding.unsplashPickerClearImageView.isVisible = false
 
                 // keyboard down
                 binding.unsplashPickerEditText.closeKeyboard(this)
@@ -221,12 +222,13 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
                 // clear list selection
                 mAdapter.clearSelection()
             }
+
             UnsplashPickerState.SEARCHING -> {
                 // back, cancel, done or search buttons gone
-                binding.unsplashPickerBackImageView.isInvisible = false
-                binding.unsplashPickerCancelImageView.isInvisible = false
-                binding.unsplashPickerDoneImageView.isInvisible = false
-                binding.unsplashPickerSearchImageView.isInvisible = false
+                binding.unsplashPickerBackImageView.isVisible = false
+                binding.unsplashPickerCancelImageView.isVisible = false
+                binding.unsplashPickerDoneImageView.isVisible = false
+                binding.unsplashPickerSearchImageView.isVisible = false
 
                 // edit text visible and focused
                 binding.unsplashPickerEditText.isVisible = true
@@ -241,6 +243,7 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
                 // clear list selection
                 mAdapter.clearSelection()
             }
+
             UnsplashPickerState.PHOTO_SELECTED -> {
                 // back and search buttons gone
                 binding.unsplashPickerBackImageView.isVisible = false

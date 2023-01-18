@@ -3,7 +3,6 @@ package com.unsplash.pickerandroid.example
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import com.unsplash.pickerandroid.example.databinding.ItemPhotoBinding
@@ -34,7 +33,7 @@ class PhotoAdapter : RecyclerView.Adapter<PhotoAdapter.PhotoViewHolder>() {
         return mListOfPhotos.size
     }
 
-    fun setListOfPhotos(listOfPhotos: ArrayList<UnsplashPhoto>?) {
+    fun setListOfPhotos(listOfPhotos: List<UnsplashPhoto>?) {
         if (listOfPhotos != null) {
             val previous = mListOfPhotos
             mListOfPhotos = listOfPhotos

@@ -8,7 +8,11 @@ import androidx.paging.PagingData
 import com.unsplash.pickerandroid.photopicker.UnsplashPhotoPicker
 import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
 import com.unsplash.pickerandroid.photopicker.domain.Repository
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 /**
@@ -47,12 +51,8 @@ class UnsplashPickerViewModel constructor(private val repository: Repository) : 
      *
      * @param photos the list of selected photos
      */
-    fun trackDownloads(photos: ArrayList<UnsplashPhoto>) {
-        viewModelScope.launch {
-            photos.onEach { photos ->
-                repository.trackDownload(photos.links.download_location)
-            }
-        }
+    fun trackDownloads(photos: List<UnsplashPhoto>) {
+        repository.trackDownload(*photos.map { it.links.download_location }.toTypedArray())
     }
 
     fun onQueryChanged(query: String) {

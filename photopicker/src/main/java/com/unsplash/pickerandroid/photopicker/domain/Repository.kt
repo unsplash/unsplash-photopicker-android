@@ -2,16 +2,23 @@ package com.unsplash.pickerandroid.photopicker.domain
 
 import android.net.Uri
 import android.util.Log
-import androidx.paging.*
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.unsplash.pickerandroid.photopicker.UnsplashPhotoPicker
 import com.unsplash.pickerandroid.photopicker.data.NetworkEndpoints
 import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 
 /**
  * Simple repository used as a proxy by the view models to fetch data.
  */
 class Repository constructor(private val networkEndpoints: NetworkEndpoints) {
+    private val coroutineScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
     fun loadPhotos(pageSize: Int): Flow<PagingData<UnsplashPhoto>> {
         return Pager(
@@ -39,16 +46,20 @@ class Repository constructor(private val networkEndpoints: NetworkEndpoints) {
         ).flow
     }
 
-    suspend fun trackDownload(url: String?) {
-        if (url != null) {
-            val downloadUrl = Uri.parse(url).buildUpon()
-                .appendQueryParameter("client_id", UnsplashPhotoPicker.getAccessKey())
-                .build()
-                .toString()
-
-            runCatching { networkEndpoints.trackDownload(downloadUrl) }
-                .onFailure {
-                    Log.e(Repository::class.java.simpleName, it.message, it)
+    fun trackDownload(vararg url: String?) {
+        // Required by api when doing a download, it uses its own coroutineScope to avoid being
+        // cancelled from outside coroutine cancelation
+        coroutineScope.launch {
+            url.filterNotNull()
+                .map {
+                    Uri.parse(it).buildUpon()
+                        .appendQueryParameter("client_id", UnsplashPhotoPicker.getAccessKey())
+                        .build()
+                        .toString()
+                }
+                .forEach {
+                    runCatching { networkEndpoints.trackDownload(it) }
+                        .onFailure { Log.e("Repository", it.message, it) }
                 }
         }
     }

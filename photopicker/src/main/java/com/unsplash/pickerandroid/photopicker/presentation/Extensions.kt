@@ -36,7 +36,6 @@ fun EditText.textChangeFlow(): Flow<String> {
         trySend(text.toString())
 
         awaitClose {
-            println("Closed text changed listener")
             removeTextChangedListener(watcher)
         }
     }

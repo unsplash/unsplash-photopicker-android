@@ -22,8 +22,8 @@ import com.unsplash.pickerandroid.photopicker.databinding.ItemUnsplashPhotoBindi
 class UnsplashPhotoAdapter(private val isMultipleSelection: Boolean) :
     PagingDataAdapter<UnsplashPhoto, UnsplashPhotoAdapter.PhotoViewHolder>(COMPARATOR) {
 
-    private val mSelectedIndexes = ArrayList<Int>()
-    private val mSelectedImages = ArrayList<UnsplashPhoto>()
+    private val mSelectedIndexes = mutableListOf<Int>()
+    private val mSelectedImages = mutableListOf<UnsplashPhoto>()
     private var mOnPhotoSelectedListener: OnPhotoSelectedListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoViewHolder {
@@ -62,9 +62,9 @@ class UnsplashPhotoAdapter(private val isMultipleSelection: Boolean) :
             // photograph name
             holder.txtView.text = photo.user.name
 
-            // Selection state
-            holder.checkedImageView.isInvisible = position !in mSelectedIndexes
-            holder.overlay.isInvisible = position !in mSelectedIndexes
+            // selected controls visibility
+            holder.checkedImageView.isInvisible = holder.bindingAdapterPosition !in mSelectedIndexes
+            holder.overlay.isInvisible = holder.bindingAdapterPosition !in mSelectedIndexes
 
             // click listener
             holder.itemView.setOnClickListener {
@@ -92,7 +92,7 @@ class UnsplashPhotoAdapter(private val isMultipleSelection: Boolean) :
     /**
      * Getter for the selected images.
      */
-    fun getImages(): ArrayList<UnsplashPhoto> {
+    fun getImages(): List<UnsplashPhoto> {
         mSelectedImages.clear()
         for (index in mSelectedIndexes) {
             snapshot()[index]?.let {
@@ -131,7 +131,7 @@ class UnsplashPhotoAdapter(private val isMultipleSelection: Boolean) :
     /**
      * UnsplashPhoto view holder.
      */
-    class PhotoViewHolder(val binding: ItemUnsplashPhotoBinding) :
+    class PhotoViewHolder(binding: ItemUnsplashPhotoBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         val imageView: AspectRatioImageView = binding.itemUnsplashPhotoImageView

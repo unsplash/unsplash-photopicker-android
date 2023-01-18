@@ -1,7 +1,7 @@
 apply plugin: 'maven-publish'
 
-version '1.0.0' // your library version
-group 'com.unsplash.pickerandroid' // whatever group name you'd like
+version '2.0.2-alpha' // your library version
+group 'com.github.Sekthdroid' // whatever group name you'd like
 
 publishing {
     publications {
