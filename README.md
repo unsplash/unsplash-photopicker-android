@@ -58,7 +58,7 @@ latest [tag](https://github.com/Sekthdroid/unsplash-photopicker-android/tags):
 
 ```gradle
 dependencies {
-   implementation 'com.github.unsplash:unsplash-photopicker-android:x.y.z'
+   implementation 'com.github.Sekthdroid:unsplash-photopicker-android:x.y.z'
 }
 ```
 

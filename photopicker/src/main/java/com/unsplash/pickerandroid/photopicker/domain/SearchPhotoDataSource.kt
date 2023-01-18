@@ -16,8 +16,6 @@ class SearchPhotoDataSource(
     private val criteria: String
 ) : PagingSource<Int, UnsplashPhoto>() {
 
-    val networkState = MutableLiveData<NetworkState>()
-
     private var lastPage: Int? = null
 
     override fun getRefreshKey(state: PagingState<Int, UnsplashPhoto>): Int? {
@@ -29,32 +27,37 @@ class SearchPhotoDataSource(
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, UnsplashPhoto> {
         val pageIndex = params.key ?: 1
-        val response =  networkEndpoints.searchPhotos(
-            UnsplashPhotoPicker.getAccessKey(),
-            criteria,
-            pageIndex,
-            params.loadSize
-        )
 
-        return if (response.isSuccessful) {
-            networkState.postValue(NetworkState.SUCCESS)
-
-            val items = response.body()?.results.orEmpty()
-
-            val nextKey = if (items.isEmpty()) {
-                null
-            } else {
-                pageIndex + (params.loadSize / UnsplashPhotoPicker.getPageSize())
-            }
-
-            LoadResult.Page(
-                items,
-                if (pageIndex == 1) null else pageIndex,
-                nextKey
+        return try {
+            val response = networkEndpoints.searchPhotos(
+                UnsplashPhotoPicker.getAccessKey(),
+                criteria,
+                pageIndex,
+                params.loadSize
             )
-        } else {
+
+            if (response.isSuccessful) {
+                val items = response.body()?.results.orEmpty()
+
+                val nextKey = if (items.isEmpty()) {
+                    null
+                } else {
+                    pageIndex + (params.loadSize / UnsplashPhotoPicker.getPageSize())
+                }
+
+                LoadResult.Page(
+                    items,
+                    if (pageIndex == 1) null else pageIndex,
+                    nextKey
+                )
+            } else {
+                LoadResult.Error(
+                    Exception(response.message())
+                )
+            }
+        } catch (ex: Exception) {
             LoadResult.Error(
-                Exception(response.message())
+                Exception(ex.message)
             )
         }
     }
