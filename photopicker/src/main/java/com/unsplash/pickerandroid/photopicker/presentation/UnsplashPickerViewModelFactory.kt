@@ -10,7 +10,7 @@ import com.unsplash.pickerandroid.photopicker.domain.Repository
  */
 class UnsplashPickerViewModelFactory constructor(private val repository: Repository) : ViewModelProvider.Factory {
 
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(UnsplashPickerViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
             return UnsplashPickerViewModel(repository) as T

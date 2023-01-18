@@ -2,60 +2,65 @@ package com.unsplash.pickerandroid.photopicker.domain
 
 import android.net.Uri
 import android.util.Log
-import androidx.paging.PagedList
-import androidx.paging.RxPagedListBuilder
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.unsplash.pickerandroid.photopicker.UnsplashPhotoPicker
 import com.unsplash.pickerandroid.photopicker.data.NetworkEndpoints
 import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
-import io.reactivex.CompletableObserver
-import io.reactivex.Observable
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 
 /**
  * Simple repository used as a proxy by the view models to fetch data.
  */
 class Repository constructor(private val networkEndpoints: NetworkEndpoints) {
+    private val coroutineScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
-    fun loadPhotos(pageSize: Int): Observable<PagedList<UnsplashPhoto>> {
-        return RxPagedListBuilder(
-            LoadPhotoDataSourceFactory(networkEndpoints),
-            PagedList.Config.Builder()
-                .setInitialLoadSizeHint(pageSize)
-                .setPageSize(pageSize)
-                .build()
-        ).buildObservable()
+    fun loadPhotos(pageSize: Int): Flow<PagingData<UnsplashPhoto>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = pageSize,
+                initialLoadSize = pageSize
+            ),
+            initialKey = null,
+            pagingSourceFactory = {
+                LoadPhotoDataSource(networkEndpoints)
+            }
+        ).flow
     }
 
-    fun searchPhotos(criteria: String, pageSize: Int): Observable<PagedList<UnsplashPhoto>> {
-        return RxPagedListBuilder(
-            SearchPhotoDataSourceFactory(networkEndpoints, criteria),
-            PagedList.Config.Builder()
-                .setInitialLoadSizeHint(pageSize)
-                .setPageSize(pageSize)
-                .build()
-        ).buildObservable()
+    fun searchPhotos(criteria: String, pageSize: Int): Flow<PagingData<UnsplashPhoto>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = pageSize,
+                initialLoadSize = pageSize
+            ),
+            initialKey = null,
+            pagingSourceFactory = {
+                SearchPhotoDataSource(networkEndpoints, criteria)
+            }
+        ).flow
     }
 
-    fun trackDownload(url: String?) {
-        if (url != null) {
-            val uriBuilder = Uri.parse(url).buildUpon()
-            uriBuilder.appendQueryParameter("client_id", UnsplashPhotoPicker.getAccessKey())
-            val downloadUrl = uriBuilder.build().toString()
-            networkEndpoints.trackDownload(downloadUrl)
-                .observeOn(Schedulers.io())
-                .subscribeOn(Schedulers.io())
-                .subscribe(object : CompletableObserver {
-                    override fun onComplete() { /* do nothing */
-                    }
-
-                    override fun onSubscribe(d: Disposable?) {  /* do nothing */
-                    }
-
-                    override fun onError(e: Throwable?) {
-                        Log.e(Repository::class.java.simpleName, e?.message, e)
-                    }
-                })
+    fun trackDownload(vararg url: String?) {
+        // Required by api when doing a download, it uses its own coroutineScope to avoid being
+        // cancelled from outside coroutine cancelation
+        coroutineScope.launch {
+            url.filterNotNull()
+                .map {
+                    Uri.parse(it).buildUpon()
+                        .appendQueryParameter("client_id", UnsplashPhotoPicker.getAccessKey())
+                        .build()
+                        .toString()
+                }
+                .forEach {
+                    runCatching { networkEndpoints.trackDownload(it) }
+                        .onFailure { Log.e("Repository", it.message, it) }
+                }
         }
     }
 }

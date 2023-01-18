@@ -1,12 +1,13 @@
 apply plugin: 'maven-publish'
 
-version '1.0.0' // your library version
-group 'com.unsplash.pickerandroid' // whatever group name you'd like
+version '2.1.0'
+group 'com.github.Sekthdroid'
 
 publishing {
     publications {
         Production(MavenPublication) {
-            artifact("$buildDir/outputs/aar/photopicker-release.aar") // replace with your library name
+            artifact("$buildDir/outputs/aar/photopicker-release.aar")
+            // replace with your library name
             groupId this.group
             artifactId 'photopicker' // replace with your library artifact id
             version this.version

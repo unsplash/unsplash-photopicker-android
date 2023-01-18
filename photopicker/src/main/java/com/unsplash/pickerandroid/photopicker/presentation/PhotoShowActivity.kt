@@ -3,25 +3,32 @@ package com.unsplash.pickerandroid.photopicker.presentation
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
-import com.squareup.picasso.Picasso
-import com.unsplash.pickerandroid.photopicker.R
-import kotlinx.android.synthetic.main.activity_image_show.*
+import com.bumptech.glide.Glide
+import com.unsplash.pickerandroid.photopicker.databinding.ActivityImageShowBinding
 
 class PhotoShowActivity : AppCompatActivity() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_image_show)
-        // loading the image thanks to its url
-        Picasso.get().load(intent.getStringExtra(EXTRA_URL))
-            .into(image_show_view)
-        // click listener
-        image_show_layout.setOnClickListener { supportFinishAfterTransition() }
+    private val binding by lazy(LazyThreadSafetyMode.NONE) {
+        ActivityImageShowBinding.inflate(layoutInflater)
     }
 
-    override fun onBackPressed() {
-        supportFinishAfterTransition()
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(binding.root)
+
+        // loading the image thanks to its url
+        Glide.with(this)
+            .load(intent.getStringExtra(EXTRA_URL))
+            .into(binding.imageShowView)
+
+        // click listener
+        binding.imageShowLayout.setOnClickListener { supportFinishAfterTransition() }
+
+        onBackPressedDispatcher.addCallback {
+            supportFinishAfterTransition()
+        }
     }
 
     companion object {
