@@ -5,7 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
-import com.squareup.picasso.Picasso
+import com.bumptech.glide.Glide
 import com.unsplash.pickerandroid.photopicker.databinding.ActivityImageShowBinding
 
 class PhotoShowActivity : AppCompatActivity() {
@@ -19,12 +19,13 @@ class PhotoShowActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // loading the image thanks to its url
-        Picasso.get().load(intent.getStringExtra(EXTRA_URL))
+        Glide.with(this)
+            .load(intent.getStringExtra(EXTRA_URL))
             .into(binding.imageShowView)
 
         // click listener
         binding.imageShowLayout.setOnClickListener { supportFinishAfterTransition() }
-        
+
         onBackPressedDispatcher.addCallback {
             supportFinishAfterTransition()
         }

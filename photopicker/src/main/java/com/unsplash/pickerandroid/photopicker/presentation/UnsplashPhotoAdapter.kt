@@ -6,10 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.view.isInvisible
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.squareup.picasso.Picasso
+import com.bumptech.glide.Glide
 import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
 import com.unsplash.pickerandroid.photopicker.databinding.ItemUnsplashPhotoBinding
 
@@ -22,9 +23,7 @@ class UnsplashPhotoAdapter(private val isMultipleSelection: Boolean) :
     PagingDataAdapter<UnsplashPhoto, UnsplashPhotoAdapter.PhotoViewHolder>(COMPARATOR) {
 
     private val mSelectedIndexes = ArrayList<Int>()
-
     private val mSelectedImages = ArrayList<UnsplashPhoto>()
-
     private var mOnPhotoSelectedListener: OnPhotoSelectedListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoViewHolder {
@@ -37,35 +36,49 @@ class UnsplashPhotoAdapter(private val isMultipleSelection: Boolean) :
         )
     }
 
+    override fun onBindViewHolder(
+        holder: PhotoViewHolder,
+        position: Int,
+        payloads: MutableList<Any>
+    ) {
+        if (payloads.isNotEmpty() && "selection" in payloads) {
+            holder.checkedImageView.isInvisible = position !in mSelectedIndexes
+            holder.overlay.isInvisible = position !in mSelectedIndexes
+        } else {
+            super.onBindViewHolder(holder, position, payloads)
+        }
+    }
+
     override fun onBindViewHolder(holder: PhotoViewHolder, position: Int) {
         // item
         getItem(position)?.let { photo ->
             // image
             holder.imageView.aspectRatio = photo.height.toDouble() / photo.width.toDouble()
             holder.itemView.setBackgroundColor(Color.parseColor(photo.color))
-            Picasso.get().load(photo.urls.small)
+            Glide.with(holder.imageView.context)
+                .load(photo.urls.small)
                 .into(holder.imageView)
+
             // photograph name
             holder.txtView.text = photo.user.name
-            // selected controls visibility
-            holder.checkedImageView.visibility =
-                if (mSelectedIndexes.contains(holder.adapterPosition)) View.VISIBLE else View.INVISIBLE
-            holder.overlay.visibility =
-                if (mSelectedIndexes.contains(holder.adapterPosition)) View.VISIBLE else View.INVISIBLE
+
+            // Selection state
+            holder.checkedImageView.isInvisible = position !in mSelectedIndexes
+            holder.overlay.isInvisible = position !in mSelectedIndexes
+
             // click listener
             holder.itemView.setOnClickListener {
                 // selected index(es) management
-                if (mSelectedIndexes.contains(holder.adapterPosition)) {
-                    mSelectedIndexes.remove(holder.adapterPosition)
+                if (position in mSelectedIndexes) {
+                    mSelectedIndexes.remove(position)
                 } else {
-                    if (!isMultipleSelection) mSelectedIndexes.clear()
-                    mSelectedIndexes.add(holder.adapterPosition)
+                    mSelectedIndexes.add(position)
                 }
                 if (isMultipleSelection) {
-                    notifyDataSetChanged()
+                    notifyItemChanged(position, "selection")
                 }
                 mOnPhotoSelectedListener?.onPhotoSelected(mSelectedIndexes.size)
-                // change title text
+
             }
             holder.itemView.setOnLongClickListener {
                 photo.urls.regular?.let {
@@ -90,8 +103,11 @@ class UnsplashPhotoAdapter(private val isMultipleSelection: Boolean) :
     }
 
     fun clearSelection() {
+        val previousSize = mSelectedIndexes.size
         mSelectedImages.clear()
         mSelectedIndexes.clear()
+
+        notifyItemRangeChanged(0, previousSize, "selection")
     }
 
     fun setOnImageSelectedListener(onPhotoSelectedListener: OnPhotoSelectedListener) {
@@ -108,7 +124,7 @@ class UnsplashPhotoAdapter(private val isMultipleSelection: Boolean) :
                 oldItem == newItem
 
             override fun areItemsTheSame(oldItem: UnsplashPhoto, newItem: UnsplashPhoto): Boolean =
-                oldItem == newItem
+                oldItem.id == newItem.id
         }
     }
 

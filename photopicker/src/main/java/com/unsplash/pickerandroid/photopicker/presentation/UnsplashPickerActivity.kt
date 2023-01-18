@@ -207,7 +207,7 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
                 if (!TextUtils.isEmpty(binding.unsplashPickerEditText.text)) {
                     binding.unsplashPickerEditText.setText("")
                 }
-                binding.unsplashPickerEditText.isInvisible = false
+                binding.unsplashPickerEditText.isVisible = false
 
                 // right clear button on top of edit text gone
                 binding.unsplashPickerClearImageView.isInvisible = false
@@ -220,7 +220,6 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
 
                 // clear list selection
                 mAdapter.clearSelection()
-                mAdapter.notifyDataSetChanged()
             }
             UnsplashPickerState.SEARCHING -> {
                 // back, cancel, done or search buttons gone
@@ -241,7 +240,6 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
 
                 // clear list selection
                 mAdapter.clearSelection()
-                mAdapter.notifyDataSetChanged()
             }
             UnsplashPickerState.PHOTO_SELECTED -> {
                 // back and search buttons gone
