@@ -9,7 +9,6 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
-import kotlinx.android.synthetic.main.item_photo.view.*
 
 class PhotoAdapter constructor(context: Context) : RecyclerView.Adapter<PhotoAdapter.PhotoViewHolder>() {
 
@@ -46,6 +45,6 @@ class PhotoAdapter constructor(context: Context) : RecyclerView.Adapter<PhotoAda
      * UnsplashPhoto view holder.
      */
     class PhotoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val imageView: ImageView = view.item_photo_iv
+        val imageView: ImageView = view.findViewById(R.id.item_photo_iv)
     }
 }

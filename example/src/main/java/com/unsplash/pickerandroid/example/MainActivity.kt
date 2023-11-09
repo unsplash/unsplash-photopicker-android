@@ -2,35 +2,41 @@ package com.unsplash.pickerandroid.example
 
 import android.app.Activity
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Button
+import android.widget.RadioButton
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
 import com.unsplash.pickerandroid.photopicker.presentation.UnsplashPickerActivity
-import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var mAdapter: PhotoAdapter
+
+    private val recyclerView: RecyclerView by lazy { findViewById(R.id.main_recycler_view) }
+    private val pickButton: Button by lazy { findViewById(R.id.main_pick_button) }
+    private val singleRadioButton: RadioButton by lazy { findViewById(R.id.main_single_radio_button) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         // result adapter
         // recycler view configuration
-        main_recycler_view.setHasFixedSize(true)
-        main_recycler_view.itemAnimator = null
-        main_recycler_view.layoutManager = StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL)
+        recyclerView.setHasFixedSize(true)
+        recyclerView.itemAnimator = null
+        recyclerView.layoutManager = StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL)
         mAdapter = PhotoAdapter(this)
-        main_recycler_view.adapter = mAdapter
+        recyclerView.adapter = mAdapter
         // on the pick button click, we start the library picker activity
         // we are expecting a result from it so we start it for result
-        main_pick_button.setOnClickListener {
+        pickButton.setOnClickListener {
             startActivityForResult(
                 UnsplashPickerActivity.getStartingIntent(
                     this,
-                    !main_single_radio_button.isChecked
+                    !singleRadioButton.isChecked
                 ), REQUEST_CODE
             )
         }
@@ -41,7 +47,8 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE) {
             // getting the photos
-            val photos: ArrayList<UnsplashPhoto>? = data?.getParcelableArrayListExtra(UnsplashPickerActivity.EXTRA_PHOTOS)
+            val photos: ArrayList<UnsplashPhoto>? =
+                data?.getParcelableArrayListExtra(UnsplashPickerActivity.EXTRA_PHOTOS)
             // showing the preview
             mAdapter.setListOfPhotos(photos)
             // telling the user how many have been selected

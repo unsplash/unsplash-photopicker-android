@@ -1,12 +1,14 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
+apply plugin: "kotlin-parcelize"
 
 android {
-    compileSdkVersion 28
+    namespace "com.unsplash.pickerandroid.photopicker"
+
+    compileSdkVersion 33
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 28
+        targetSdkVersion 33
         versionCode 2
         versionName "1.0.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -16,9 +18,6 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
-    }
-    androidExtensions {
-        experimental = true
     }
 }
 
@@ -47,7 +46,7 @@ dependencies {
 
     // lifecycle
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
-    kapt 'androidx.lifecycle:lifecycle-compiler:2.1.0-alpha04'
+//    kapt 'androidx.lifecycle:lifecycle-compiler:2.1.0-alpha04'
 
     // test
     testImplementation 'junit:junit:4.12'
