@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import com.unsplash.pickerandroid.photopicker.R
 import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
-import kotlinx.android.synthetic.main.item_unsplash_photo.view.*
 
 /**
  * The photos recycler view adapter.
@@ -111,9 +110,9 @@ class UnsplashPhotoAdapter constructor(context: Context, private val isMultipleS
      * UnsplashPhoto view holder.
      */
     class PhotoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val imageView: AspectRatioImageView = view.item_unsplash_photo_image_view
-        val txtView: TextView = view.item_unsplash_photo_text_view
-        val checkedImageView: ImageView = view.item_unsplash_photo_checked_image_view
-        val overlay: View = view.item_unsplash_photo_overlay
+        val imageView: AspectRatioImageView = view.findViewById(R.id.item_unsplash_photo_image_view)
+        val txtView: TextView = view.findViewById(R.id.item_unsplash_photo_text_view)
+        val checkedImageView: ImageView = view.findViewById(R.id.item_unsplash_photo_checked_image_view)
+        val overlay: View = view.findViewById(R.id.item_unsplash_photo_overlay)
     }
 }

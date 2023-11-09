@@ -3,10 +3,11 @@ package com.unsplash.pickerandroid.photopicker.presentation
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.squareup.picasso.Picasso
 import com.unsplash.pickerandroid.photopicker.R
-import kotlinx.android.synthetic.main.activity_image_show.*
 
 class PhotoShowActivity : AppCompatActivity() {
 
@@ -15,9 +16,9 @@ class PhotoShowActivity : AppCompatActivity() {
         setContentView(R.layout.activity_image_show)
         // loading the image thanks to its url
         Picasso.get().load(intent.getStringExtra(EXTRA_URL))
-            .into(image_show_view)
+            .into(findViewById<ImageView>(R.id.image_show_view))
         // click listener
-        image_show_layout.setOnClickListener { supportFinishAfterTransition() }
+        findViewById<ConstraintLayout>(R.id.image_show_layout).setOnClickListener { supportFinishAfterTransition() }
     }
 
     override fun onBackPressed() {
